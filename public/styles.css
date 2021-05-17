@@ -1,3 +1,5 @@
 :root {
-    --primary: #A33B20;
+  --primary: #A33B20;
+  --primary-faded: #B36352;
+  --primary-faded-hovered: #9b5444;
 }
