@@ -6,7 +6,7 @@
 <style scoped>
 #main {
   text-align: left;
-  width: 100%;
+  width: 100% - 10px;
   font-size: 16px;
   height: 150px;
   padding-left: 15px;

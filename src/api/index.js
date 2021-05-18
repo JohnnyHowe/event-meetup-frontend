@@ -1,3 +1,3 @@
-import * as events from "./events.js";
+import events from "./events.js";
 
 export default { events };

@@ -8,10 +8,17 @@
           <b-button class="search-button" v-on:click="search">Search</b-button>
         </b-input-group-append>
       </b-input-group> -->
+      <table class="grow">
+        <td class="grow">
+          <input class="grow" type="text" placeholder="Search..." />
+        </td>
+        <td>
+          <button type="button">Search</button>
+        </td>
+      </table>
       <!-- Other filters -->
       <table class="filter-table">
-        <tr>
-        </tr>
+        <tr></tr>
       </table>
 
       <!-- Show the events -->
@@ -43,11 +50,14 @@ export default {
   },
   methods: {
     loadEvents() {
-      api.events.get({
-        q: this.filters.searchString === "" ? null : this.filters.searchString,
-      }).then((res) => {
-        this.events = res.data;
-      });
+      api.events
+        .get({
+          q:
+            this.filters.searchString === "" ? null : this.filters.searchString,
+        })
+        .then((res) => {
+          this.events = res.data;
+        });
     },
     search() {
       this.loadEvents();
@@ -62,11 +72,11 @@ export default {
 .search-button {
   background-color: var(--primary-faded);
 }
-td {
-  /* border: 1px dotted black; */
-}
 .filter-table {
   width: 100%;
   /* border: 1px solid black; */
+}
+.grow {
+    width: 100%;
 }
 </style>

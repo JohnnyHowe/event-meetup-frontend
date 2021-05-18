@@ -14,6 +14,7 @@
 </template>
 <script>
 import CardButton from "@/components/CardButton.vue";
+// import api from "@/api";
 export default {
   components: {
     CardButton,
@@ -21,9 +22,27 @@ export default {
   props: {
     event,
   },
+  mounted: function () {
+    this.loadEventInfo();
+  },
   methods: {
     gotoEventPage() {
       //   router.push({ path: `events/${this.event.eventId}` });
+    },
+    loadEventInfo() {
+      this.getEventImage();
+    },
+    getEventImage() {
+      // api.events.images
+      //   .get(0)
+      //   .then((res) => {
+      //     console.log(res)
+      //     // OwO got image
+      //   })
+      //   .catch((e) => {
+      //     console.log(e)
+      //     // Cannot get the image, use default image
+      //   });
     },
   },
   computed: {

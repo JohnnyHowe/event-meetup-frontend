@@ -1,10 +1,9 @@
 <template>
   <Navbar />
-  <EventsPage />
+  <router-view/>
 </template>
 
 <script>
-import EventsPage from "./components/EventsPage.vue";
 import Navbar from "./components/Navbar.vue";
 
 import "@/../public/styles.css";
@@ -12,7 +11,6 @@ import "@/../public/styles.css";
 export default {
   name: "App",
   components: {
-    EventsPage,
     Navbar,
   },
 };
