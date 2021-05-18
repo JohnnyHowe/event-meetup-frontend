@@ -7,6 +7,7 @@ export default createRouter({
     history: createWebHashHistory(),
     routes: [
         { path: "/", component: EventsPage },
+        { path: "/events", component: EventsPage },
         { path: "/register", component: RegisterPage },
     ],
 })
