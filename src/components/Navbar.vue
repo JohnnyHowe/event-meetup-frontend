@@ -13,42 +13,37 @@
       </td>
       <td style="width: 100%"></td>
       <div v-show="isLoggedIn">
-        <!-- <td>
-          <b-icon-person-circle class="user-icon" variant="light" />
-        </td>
-        <td class="user-name">Username</td> -->
-        <!-- <div class="page-links" v-on:click="logout">Log Out</div>
+        <div class="page-links" v-on:click="logout">Log Out</div>
       </div>
       <div v-show="!isLoggedIn">
-        <div class="page-links" v-on:click="gotoLogin">Log In</div> -->
+        <div class="page-links" v-on:click="gotoLogin">Log In</div>
       </div>
     </table>
   </div>
 </template>
 <script>
-// import router from "@/routes";
-// import store from "@/store";
+import router from "@/routes";
+import store from "@/store";
 export default {
   methods: {
     logout() {
-    //   store.logout();
-    //   this.gotoLogin();
+      store.logout();
+      this.gotoLogin();
     },
     gotoLogin() {
-    //   router.push({ path: "/login" });
+      router.push({ path: "/login" });
     },
     gotoEvents() {
-    //   router.push({ path: "/events" });
+      router.push({ path: "/events" });
     },
   },
   computed: {
     isLoggedIn() {
-    //   return store.isLoggedIn();
-    return false
+      console.log("logged in")
+      return store.isLoggedIn();
     },
     userFullName() {
-    //   return store.user.firstName + " " + store.user.lastName;
-    return "Not logged in"
+      return store.user.firstName + " " + store.user.lastName;
     },
   },
 };

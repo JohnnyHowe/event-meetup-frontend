@@ -26,7 +26,7 @@ async function register(form, loginWhenComplete = true) {
  * @param {{email: String, password: String}} form 
  */
 export async function login(form) {
-    const res = await makeRequest(axios.post, "users/login", form);
+    const res = await makeRequest(axios.post, "users/login", {}, form);
     if (res.status == 200) {
         const userRes = await get(res.data.userId);
         store.login(res.data.token, userRes.data);
