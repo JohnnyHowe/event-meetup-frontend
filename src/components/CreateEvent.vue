@@ -51,19 +51,13 @@
 import PageContent from "@/components/PageContent.vue";
 import FormInputBar from "@/components/FormInputBar.vue";
 import api from "@/api";
-import store from "@/store";
 export default {
   components: {
     PageContent,
     FormInputBar,
   },
   mounted: function () {
-    if (store.isLoggedIn()) {
-      console.log("Already logged in, re-routing to events");
-      this.$router.push("events");
-    } else {
-      this.loadCategories();
-    }
+    this.loadCategories();
   },
   data: function () {
     return {
@@ -73,32 +67,32 @@ export default {
       time: "",
       form: {
         title: "",
-        image: "",
         description: "",
-        capacity: "",
-        isOnline: "",
+        categoryIds: [],
+        date: "",
+        isOnline: false,
         url: "",
         venue: "",
-        controlAttendance: "",
+        capacity: "0",
+        requiresAttendanceControl: false,
         fee: "0",
-        categories: [],
       },
     };
   },
   methods: {
     onSubmit() {
-      if (this.errorChecking()) {
-        console.log(this.form);
+      let form = this.convertTypes();
+      if (this.errorChecking(form)) {
+          this.errorMessages = [];
+        api.events
+          .add(form)
+          .then(() => {
+            this.$router.push("events");
+          })
+          .catch((e) => {
+            this.errorMessages = [e.response.statusText];
+          });
       }
-      api.events
-        .add(this.form)
-        .then(() => {
-          this.errorMessage = "";
-          this.$router.push("events");
-        })
-        .catch((e) => {
-          this.errorMessage = e.response.statusText;
-        });
     },
     loadCategories() {
       api.events
@@ -119,19 +113,25 @@ export default {
           console.log(e);
         });
     },
-    errorChecking() {
+    convertTypes() {
+      const form = Object.assign({}, this.form);
+      form.capacity = parseInt(form.capacity);
+      form.fee = parseFloat(form.fee);
+      return form;
+    },
+    errorChecking(form) {
       // I know this is dumb but oh well
       this.errorMessages = [];
 
       // Title
-      if (this.form.title == "") this.errorMessages.push("Title must exist");
+      if (form.title == "") this.errorMessages.push("Title must exist");
 
       // Categories
-      if (this.form.categories.length == 0)
+      if (form.categoryIds.length == 0)
         this.errorMessages.push("At least one category required");
 
       // Date
-      if (this.form.date == null) {
+      if (form.date == null || form.date == "") {
         this.errorMessages.push("A full date and time is required");
       } else if (this.getDateTimeObject() < new Date()) {
         this.errorMessages.push("Date and time must be in future");
@@ -158,7 +158,7 @@ export default {
       }
     },
     updateEnabledCategories() {
-      this.form.categories = this.getEnabledCategories();
+      this.form.categoryIds = this.getEnabledCategories();
     },
     getEnabledCategories() {
       let categories = [];

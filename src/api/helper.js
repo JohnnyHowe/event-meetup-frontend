@@ -1,3 +1,5 @@
+
+import store from "@/store";
 const VERBOSE = true;
 
 /**
@@ -10,9 +12,9 @@ export async function makeRequest(method, endpoint, parameters, body) {
     const url = process.env.VUE_APP_BACKEND_URL + "/" + endpoint + getParamterString(parameters);
     if (VERBOSE) console.log("Talk to: " + url);
     const config = {
-        // headers: {
-        //     'X-Authorization': store.authToken,
-        // }
+        headers: {
+            'X-Authorization': store.userStore.authToken,
+        }
     }
     return method(url, body, config);
 }
