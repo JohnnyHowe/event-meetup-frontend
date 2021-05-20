@@ -1,7 +1,10 @@
 import { createWebHashHistory, createRouter } from 'vue-router'
+
 import EventsPage from "@/components/EventsPage.vue";
 import RegisterPage from "@/components/RegisterPage.vue";
 import LoginPage from "@/components/LoginPage.vue";
+import CreateEvent from "@/components/CreateEvent.vue";
+
 import store from "@/store";
 
 
@@ -9,9 +12,12 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes: [
         { path: "/", component: EventsPage },
-        { path: "/events", component: EventsPage},
+
         { path: "/register", component: RegisterPage },
         { path: "/login", component: LoginPage },
+
+        { path: "/events/new", component: CreateEvent },
+        // { path: "/events", component: EventsPage },
     ],
 })
 
