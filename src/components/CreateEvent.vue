@@ -26,11 +26,11 @@
     <FormInputBar v-model="form.venue" title="Location" />
     <FormInputBar v-model="form.fee" title="Fee (NZD)" type="number" />
 
-    <table>
+    <table class="grow">
       <td>
         <p style="text-align: left">Categories:</p>
       </td>
-      <td style="padding-left: 30px; text-align: left">
+      <td style="padding-left: 4px; text-align: left">
         <tr v-for="option in categoryOptions" v-bind:key="option.name">
           <input
             v-model="option.enabled"
@@ -131,8 +131,11 @@ export default {
         this.errorMessages.push("At least one category required");
 
       // Date
-      if (this.form.date == "")
-        this.errorMessages.push("A date in the future is required");
+      if (this.form.date == null) {
+        this.errorMessages.push("A full date and time is required");
+      } else if (this.getDateTimeObject() < new Date()) {
+        this.errorMessages.push("Date and time must be in future");
+      }
 
       return this.errorMessages.length == 0;
     },
@@ -147,7 +150,9 @@ export default {
     updateDate() {
       try {
         const isoDate = this.getDateTimeObject().toISOString();
-        this.form.date = isoDate.substring(0, isoDate.length - 1).replace("T", " ");
+        this.form.date = isoDate
+          .substring(0, isoDate.length - 1)
+          .replace("T", " ");
       } catch {
         // pass
       }
