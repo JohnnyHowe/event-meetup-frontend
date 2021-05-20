@@ -1,7 +1,7 @@
 <template>
   <table class="grow" VALIGN="TOP">
     <td id="title">{{ title }}:</td>
-    <td v-if="isTextArea()" class="input-box">
+    <td v-if="type === 'textarea'" class="input-box">
       <textarea v-model="ivalue" class="input-box" v-bind:type="type" />
     </td>
     <td v-else class="input-box">
@@ -17,7 +17,8 @@ export default {
     type: {
         type: String,
         default: "text",
-    }
+    },
+    data: {},
   },
   mounted: function() {
     this.ivalue = this.modelValue;

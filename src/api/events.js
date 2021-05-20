@@ -7,4 +7,8 @@ async function get() {
     return makeRequest(axios.get, "events")
 }
 
-export default { images, get };
+async function categories() {
+    return makeRequest(axios.get, "events/categories")
+}
+
+export default { images, get, categories };
