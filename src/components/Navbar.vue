@@ -27,7 +27,7 @@ import store from "@/store";
 export default {
   methods: {
     logout() {
-      store.logout();
+      store.userStore.logout();
       this.gotoLogin();
     },
     gotoLogin() {
@@ -43,7 +43,7 @@ export default {
       return store.isLoggedIn();
     },
     userFullName() {
-      return store.user.firstName + " " + store.user.lastName;
+      return store.userStore.user.firstName + " " + store.userStore.user.lastName;
     },
   },
 };

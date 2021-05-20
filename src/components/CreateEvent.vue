@@ -90,15 +90,15 @@ export default {
       if (this.errorChecking()) {
         console.log(this.form);
       }
-      //   api.users
-      //     .login(this.form)
-      //     .then(() => {
-      //       this.errorMessage = "";
-      //       this.$router.push("events");
-      //     })
-      //     .catch((e) => {
-      //       this.errorMessage = e.response.statusText;
-      //     });
+      api.events
+        .add(this.form)
+        .then(() => {
+          this.errorMessage = "";
+          this.$router.push("events");
+        })
+        .catch((e) => {
+          this.errorMessage = e.response.statusText;
+        });
     },
     loadCategories() {
       api.events

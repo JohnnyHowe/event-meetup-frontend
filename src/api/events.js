@@ -11,4 +11,8 @@ async function categories() {
     return makeRequest(axios.get, "events/categories")
 }
 
-export default { images, get, categories };
+async function add(form) {
+    return makeRequest(axios.post, "events", {}, form)
+}
+
+export default { images, get, categories, add };

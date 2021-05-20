@@ -16,7 +16,7 @@ const router = createRouter({
         { path: "/register", component: RegisterPage },
         { path: "/login", component: LoginPage },
 
-        { path: "/events/new", component: CreateEvent },
+        { path: "/events/add", component: CreateEvent, meta: { requiresAuth: true } },
         { path: "/events", component: EventsPage },
     ],
 })

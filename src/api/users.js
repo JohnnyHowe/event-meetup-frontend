@@ -29,7 +29,7 @@ export async function login(form) {
     const res = await makeRequest(axios.post, "users/login", {}, form);
     if (res.status == 200) {
         const userRes = await get(res.data.userId);
-        store.login(res.data.token, userRes.data);
+        store.userStore.login(res.data.token, userRes.data);
     }
     return res;
 }
