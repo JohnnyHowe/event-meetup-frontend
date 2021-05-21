@@ -1,12 +1,17 @@
 <template>
   <table class="grow" VALIGN="TOP">
-    <td id="title">{{ title }}:</td>
-    <td v-if="type === 'textarea'" class="input-box">
-      <textarea v-model="ivalue" class="input-box" v-bind:type="type" />
-    </td>
-    <td v-else class="input-box">
-      <input v-model="ivalue" class="input-box" v-bind:type="type" />
-    </td>
+    <tr>
+      <td id="title">{{ title }}:</td>
+      <td v-if="type === 'textarea'" class="input-cell">
+        <textarea v-model="ivalue" class="input-box" v-bind:type="type" />
+      </td>
+      <td v-else-if="type === 'checkbox'" class="input-cell" style="text-align:left">
+        <input v-model="ivalue" style="text-align:left" v-bind:type="type" />
+      </td>
+      <td v-else class="input-cell">
+        <input v-model="ivalue" class="input-box" v-bind:type="type" />
+      </td>
+    </tr>
   </table>
 </template>
 <script>
@@ -15,12 +20,12 @@ export default {
     title: String,
     modelValue: String,
     type: {
-        type: String,
-        default: "text",
+      type: String,
+      default: "text",
     },
     data: {},
   },
-  mounted: function() {
+  mounted: function () {
     this.ivalue = this.modelValue;
   },
   data() {
@@ -31,7 +36,7 @@ export default {
   methods: {
     isTextArea() {
       return this.type === "textarea";
-    }
+    },
   },
   watch: {
     ivalue: function () {
@@ -42,13 +47,17 @@ export default {
 </script>
 <style scoped>
 #title {
-  white-space: nowrap;
+  /* white-space: nowrap; */
   text-align: right;
+  width: 150px;
 }
 .grow {
   width: 100%;
 }
+.input-cell {
+  width: 100% - 150px;
+}
 .input-box {
-  width: 80%;
+  width: 100%;
 }
 </style>

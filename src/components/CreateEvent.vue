@@ -16,19 +16,29 @@
       title="Time*"
       type="time"
     />
-    <FormInputBar v-model="form.capacity" title="Capacity" type="number" />
+    <FormInputBar v-model="form.capacity" title="Capacity*" type="number" />
     <FormInputBar
       v-model="form.description"
-      title="Description"
+      title="Description*"
       type="textarea"
     />
-    <FormInputBar v-model="form.url" title="URL" />
-    <FormInputBar v-model="form.venue" title="Location" />
-    <FormInputBar v-model="form.fee" title="Fee (NZD)" type="number" />
+    <FormInputBar v-model="form.isOnline" title="Is Online" type="checkbox" />
+    <FormInputBar v-if="form.isOnline" v-model="form.url" title="URL*" />
+    <FormInputBar
+      v-if="!form.isOnline"
+      v-model="form.venue"
+      title="Location*"
+    />
+    <FormInputBar v-model="form.fee" title="Fee (NZD)*" type="number" />
+    <FormInputBar
+      v-model="form.requiresAttendanceControl"
+      title="Requires Attendance Control"
+      type="checkbox"
+    />
 
     <table class="grow">
       <td>
-        <p style="text-align: left">Categories:</p>
+        <p style="text-align: right">Categories:</p>
       </td>
       <td style="padding-left: 4px; text-align: left">
         <tr v-for="option in categoryOptions" v-bind:key="option.name">
@@ -70,11 +80,11 @@ export default {
         description: "",
         categoryIds: [],
         date: "",
-        isOnline: false,
+        isOnline: "false",
         url: "",
         venue: "",
         capacity: "0",
-        requiresAttendanceControl: false,
+        requiresAttendanceControl: "false",
         fee: "0",
       },
     };
@@ -83,15 +93,16 @@ export default {
     onSubmit() {
       let form = this.convertTypes();
       if (this.errorChecking(form)) {
-          this.errorMessages = [];
-        api.events
-          .add(form)
-          .then(() => {
-            this.$router.push("events");
-          })
-          .catch((e) => {
-            this.errorMessages = [e.response.statusText];
-          });
+        this.errorMessages = [];
+        console.log(form);
+        // api.events
+        //   .add(form)
+        //   .then(() => {
+        //     this.$router.push("events");
+        //   })
+        //   .catch((e) => {
+        //     this.errorMessages = [e.response.statusText];
+        //   });
       }
     },
     loadCategories() {
@@ -117,6 +128,9 @@ export default {
       const form = Object.assign({}, this.form);
       form.capacity = parseInt(form.capacity);
       form.fee = parseFloat(form.fee);
+      form.isOnline = form.isOnline === "true" || form.isOnline === true;
+      form.requiresAttendanceControl =
+        form.requiresAttendanceControl === "true";
       return form;
     },
     errorChecking(form) {
@@ -126,16 +140,27 @@ export default {
       // Title
       if (form.title == "") this.errorMessages.push("Title must exist");
 
-      // Categories
-      if (form.categoryIds.length == 0)
-        this.errorMessages.push("At least one category required");
-
       // Date
       if (form.date == null || form.date == "") {
         this.errorMessages.push("A full date and time is required");
       } else if (this.getDateTimeObject() < new Date()) {
         this.errorMessages.push("Date and time must be in future");
       }
+
+      // Capacity
+      // DOING THIS JOHNNY
+
+      // URL
+      if (form.isOnline && form.url.length == 0)
+        this.errorMessages.push("Online events must have a URL");
+
+      // Venue
+      if (!form.isOnline && form.venue.length == 0)
+        this.errorMessages.push("In person events must have a venue");
+
+      // Categories
+      if (form.categoryIds.length == 0)
+        this.errorMessages.push("At least one category required");
 
       return this.errorMessages.length == 0;
     },
