@@ -6,7 +6,9 @@
     <FormInputBar v-model="form.email" title="Email" />
     <FormInputBar v-model="form.password" title="Password" type="password" />
     <button v-on:click="onSubmit">Register</button>
-  </PageContent>
+    <br/>
+    <br/>
+    <button v-on:click="gotoLoginPage">Already a user? <strong>Login</strong></button> </PageContent>
 </template>
 <script>
 import PageContent from "@/components/PageContent.vue";
@@ -34,11 +36,14 @@ export default {
         .register(this.form)
         .then(() => {
           this.errorMessage = "";
-          this.$router.push("events")
+          this.$router.push("events");
         })
         .catch((e) => {
           this.errorMessage = e.response.statusText;
         });
+    },
+    gotoLoginPage() {
+      this.$router.push("login");
     },
   },
 };

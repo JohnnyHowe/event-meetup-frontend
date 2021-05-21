@@ -4,6 +4,9 @@
     <FormInputBar v-model="form.email" title="Email" />
     <FormInputBar v-model="form.password" title="Password" type="password" />
     <button v-on:click="onSubmit">Login</button>
+    <br/>
+    <br/>
+    <button v-on:click="gotoRegisterPage">Not a user? <strong>Register</strong></button>
   </PageContent>
 </template>
 <script>
@@ -43,6 +46,9 @@ export default {
           this.errorMessage = e.response.statusText;
         });
     },
+    gotoRegisterPage() {
+          this.$router.push("register");
+    }
   },
 };
 </script>
