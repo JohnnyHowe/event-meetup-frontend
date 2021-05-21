@@ -11,6 +11,9 @@
       <td>
         <div class="page-links" v-on:click="gotoEvents">Events</div>
       </td>
+      <td>
+        <div class="page-links" v-if="isLoggedIn" v-on:click="gotoCreateEvent">Create Event</div>
+      </td>
       <td style="width: 100%"></td>
       <div v-show="isLoggedIn">
         <div class="page-links" v-on:click="logout">Log Out</div>
@@ -36,14 +39,19 @@ export default {
     gotoEvents() {
       router.push({ path: "/events" });
     },
+    gotoCreateEvent() {
+      router.push({ path: "/events/add" });
+    },
   },
   computed: {
     isLoggedIn() {
-      console.log("logged in")
+      console.log("logged in");
       return store.isLoggedIn();
     },
     userFullName() {
-      return store.userStore.user.firstName + " " + store.userStore.user.lastName;
+      return (
+        store.userStore.user.firstName + " " + store.userStore.user.lastName
+      );
     },
   },
 };

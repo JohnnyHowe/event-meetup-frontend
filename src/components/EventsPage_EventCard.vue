@@ -2,52 +2,53 @@
   <CardButton v-on:click="gotoEventPage">
     <table id="main-table">
       <td id="text-col">
-        <p id="title">{{ event.title }}</p>
+        <p id="title">{{ eventData.title }}</p>
         {{ timeString }}, {{ date.toDateString() }} <br />
-        Organizer: {{ event.organizerFirstName }} {{ event.organizerLastName
+        Organizer: {{ eventData.organizerFirstName }} {{ eventData.organizerLastName
         }}<br />
-        Attendees: {{ event.numAcceptedAttendees }} / {{ event.capacity }}<br />
-        Categories: {{ event.categories }}
+        Attendees: {{ eventData.numAcceptedAttendees }} / {{ eventData.capacity }}<br />
+        Categories: {{ eventData.categories }}
       </td>
     </table>
   </CardButton>
 </template>
 <script>
 import CardButton from "@/components/CardButton.vue";
-// import api from "@/api";
+import api from "@/api";
 export default {
   components: {
     CardButton,
   },
   props: {
-    event,
+    eventData: String,
   },
   mounted: function () {
     this.loadEventInfo();
   },
   methods: {
     gotoEventPage() {
-      //   router.push({ path: `events/${this.event.eventId}` });
+      //   router.push({ path: `eventData./${this.event.eventId}` });
     },
     loadEventInfo() {
       this.getEventImage();
     },
     getEventImage() {
-      // api.events.images
-      //   .get(0)
-      //   .then((res) => {
-      //     console.log(res)
-      //     // OwO got image
-      //   })
-      //   .catch((e) => {
-      //     console.log(e)
-      //     // Cannot get the image, use default image
-      //   });
+      api.events.images
+        .get(this.eventData.eventId)
+        .then((res) => {
+          console.log(res);
+          // OwO got image
+        })
+        .catch((e) => {
+          // Cannot get the image, use default image
+          // console.log(e)
+          console.log(`${e.response.status} Error getting image for event ${this.eventData.eventId}`)
+        });
     },
   },
   computed: {
     date: function () {
-      return new Date(this.$props.event.date);
+      return new Date(this.$props.eventData.date);
     },
     /**
      * Get a string repsenenting the time in the format [h]h:mm[am|pm]
@@ -76,7 +77,7 @@ export default {
 #title {
   font-size: 20px;
 }
-#event-img {
+#eventData.img {
   /* padding: 10px; */
   margin: 0px;
   height: 135px;

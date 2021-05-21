@@ -2,12 +2,6 @@
   <PageContent title="Events">
     <div>
       <!-- Search bar -->
-      <!-- <b-input-group>
-        <b-form-input v-model="filters.searchString"></b-form-input>
-        <b-input-group-append>
-          <b-button class="search-button" v-on:click="search">Search</b-button>
-        </b-input-group-append>
-      </b-input-group> -->
       <table class="grow">
         <td class="grow">
           <input class="grow" type="text" placeholder="Search..." />
@@ -22,8 +16,8 @@
       </table>
 
       <!-- Show the events -->
-      <div v-for="event in events" v-bind:key="event.id" class="event">
-        <EventsPage_Event v-bind:event="event" />
+      <div v-for="event in events" v-bind:key="event.eventId" class="event">
+        <EventsPage_Event v-bind:eventData="event" />
       </div>
     </div>
   </PageContent>
@@ -57,6 +51,7 @@ export default {
         })
         .then((res) => {
           this.events = res.data;
+          // this.events = [res.data[0]];
         });
     },
     search() {
