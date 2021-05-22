@@ -8,7 +8,7 @@
         {{ eventData.organizerLastName }}<br />
         Attendees: {{ eventData.numAcceptedAttendees }} / {{ eventData.capacity
         }}<br />
-        Categories: {{ eventData.categories }}
+        Categories: {{ categoryString }}
       </td>
     </table>
   </CardButton>
@@ -27,21 +27,41 @@ export default {
       imgSrc: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
     AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
         9TXL0Y4OHwAAAABJRU5ErkJggg==`,
+      categoryString: "",
     };
   },
   mounted: function () {
-    // this.loadEventInfo();
+    this.loadEventInfo();
   },
   methods: {
+    loadCategories() {
+      // I know this dumb but I'm on a time crunch here
+      let s = "";
+      api.events.categories().then((res) => {
+        for (let id of this.eventData.categories) {
+          for (let c of res.data) {
+            if (c.id == id) {
+              s += c.name + ", ";
+            }
+          }
+        }
+        if (s.length > 0) {
+          this.categoryString = s.substring(0, s.length - 2);
+        }
+      });
+    },
     gotoEventPage() {
       //   router.push({ path: `eventData./${this.event.eventId}` });
     },
     loadEventInfo() {
-      this.getEventImage();
+      // this.getEventImage();
+      this.loadCategories();
     },
     getEventImage() {
       api.events.images.get(this.eventData.eventId).then((res) => {
-        this.imgSrc = `data:${res.headers["content-type"]};base64,${btoa(unescape(encodeURIComponent(res.data)))}`;
+        this.imgSrc = `data:${res.headers["content-type"]};base64,${btoa(
+          unescape(encodeURIComponent(res.data))
+        )}`;
       });
       // .catch((e) => {
       //   // Cannot get the image, use default image

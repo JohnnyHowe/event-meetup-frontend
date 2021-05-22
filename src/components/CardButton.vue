@@ -8,7 +8,7 @@
   text-align: left;
   width: 100% - 10px;
   font-size: 16px;
-  height: 150px;
+  /* height: 150px; */
   padding-left: 15px;
   border: 1px solid var(--primary-faded);
   background-color: var(--primary-faded);

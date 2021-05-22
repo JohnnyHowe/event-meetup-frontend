@@ -16,12 +16,23 @@
       title="Time*"
       type="time"
     />
-    <FormInputBar v-model="form.capacity" title="Capacity*" type="number" />
     <FormInputBar
       v-model="form.description"
       title="Description*"
       type="textarea"
     />
+    <FormInputBar
+      v-model="hasMaxCapacity"
+      title="Has Max Capacity"
+      type="checkbox"
+    />
+    <FormInputBar
+      v-if="hasMaxCapacity"
+      v-model="capacity"
+      title="Capacity"
+      type="number"
+    />
+
     <FormInputBar v-model="form.isOnline" title="Is Online" type="checkbox" />
     <FormInputBar v-if="form.isOnline" v-model="form.url" title="URL*" />
     <FormInputBar
@@ -75,16 +86,17 @@ export default {
       errorMessages: [],
       date: "",
       time: "",
+      capacity: "10",
+      hasMaxCapacity: false,
       form: {
         title: "",
         description: "",
         categoryIds: [],
         date: "",
-        isOnline: "false",
+        isOnline: false,
         url: "",
         venue: "",
-        capacity: "0",
-        requiresAttendanceControl: "false",
+        requiresAttendanceControl: false,
         fee: "0",
       },
     };
@@ -94,15 +106,14 @@ export default {
       let form = this.convertTypes();
       if (this.errorChecking(form)) {
         this.errorMessages = [];
-        console.log(form);
-        // api.events
-        //   .add(form)
-        //   .then(() => {
-        //     this.$router.push("events");
-        //   })
-        //   .catch((e) => {
-        //     this.errorMessages = [e.response.statusText];
-        //   });
+        api.events
+          .add(form)
+          .then(() => {
+            this.$router.push("/events");
+          })
+          .catch((e) => {
+            this.errorMessages = [e.response.statusText];
+          });
       }
     },
     loadCategories() {
@@ -126,7 +137,9 @@ export default {
     },
     convertTypes() {
       const form = Object.assign({}, this.form);
-      form.capacity = parseInt(form.capacity);
+      if (this.hasMaxCapacity) {
+        form.capacity = parseInt(this.capacity);
+      }
       form.fee = parseFloat(form.fee);
       form.isOnline = form.isOnline === "true" || form.isOnline === true;
       form.requiresAttendanceControl =
