@@ -16,6 +16,20 @@
     </table>
     <!-- Other filters -->
     <table class="filter-table">
+      <!-- Sort -->
+      <table class="grow">
+        <td>
+          <p style="white-space: nowrap">Sort By:</p>
+        </td>
+        <td class="grow">
+          <select class="grow" name="cars" id="cars" v-model="sortBy">
+            <option v-for="s of sortOptions" v-bind:key="s" v-bind:value="s">
+              {{ s }}
+            </option>
+          </select>
+        </td>
+      </table>
+      <!-- Categories -->
       <tr>
         Filter By Categories:
         <input
@@ -42,8 +56,8 @@
         </div>
       </tr>
     </table>
-
-    Showing {{showingEvents.length}} of {{events.length}} Results
+    <br />
+    Showing {{ showingEvents.length }} of {{ events.length }} Results
 
     <!-- Show the events -->
     <div
@@ -85,6 +99,13 @@ export default {
       filters: {
         searchString: "",
       },
+      sortBy: null,
+      sortOptions: [
+        "Attendees Ascending",
+        "Attendees Descending",
+        "Date Close",
+        "Date Far",
+      ],
     };
   },
   mounted() {
@@ -113,16 +134,38 @@ export default {
         this.pageSize * (1 + this.pageIndex)
       );
     },
+    async sortEvents() {
+      // Am being lazy and getting server to sort dates
+      await this.loadEvents();
+      if (this.sortBy === "Attendees Ascending") {
+        this.events.sort((a, b) => {
+          return parseInt(a.numAcceptedAttendees) >
+            parseInt(b.numAcceptedAttendees)
+            ? 1
+            : -1;
+        });
+      } else if (this.sortBy === "Attendees Descending") {
+        this.events.sort((a, b) => {
+          return parseInt(a.numAcceptedAttendees) <
+            parseInt(b.numAcceptedAttendees)
+            ? 1
+            : -1;
+        });
+      }
+      this.changePage();
+    },
     onLoad() {
       this.filterCategories();
       this.changePage();
     },
-    loadEvents() {
-      api.events.get().then((res) => {
-        this.events = this.filterForTitle(res.data, this.filters.searchString);
-        this.allEvents = this.events;
-        this.onLoad();
-      });
+    async loadEvents() {
+      let sort = "DATE_ASC";
+      if (this.sortBy === "Date Far") sort = "DATE_DESC";
+      let res = await api.events.get({ sortBy: sort });
+      this.events = this.filterForTitle(res.data, this.filters.searchString);
+      this.allEvents = this.events;
+      this.onLoad();
+      return res;
     },
     search() {
       this.pageIndex = 0;
@@ -163,6 +206,11 @@ export default {
         }
       }
       return es;
+    },
+  },
+  watch: {
+    sortBy() {
+      this.sortEvents();
     },
   },
 };
