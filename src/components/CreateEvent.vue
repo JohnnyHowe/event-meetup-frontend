@@ -170,7 +170,8 @@ export default {
       }
 
       // Capacity
-      // DOING THIS JOHNNY
+      if (this.hasMaxCapacity && !form.capacity)
+        this.errorMessages.push("Capacity cannot be empty if event has max");
 
       // URL
       if (form.isOnline && form.url.length == 0)
@@ -211,7 +212,7 @@ export default {
       let categories = [];
       for (let o of this.categoryOptions) {
         if (o.enabled) {
-          categories.push(o.id);
+          categories.push(parseInt(o.id));
         }
       }
       return categories;
@@ -232,5 +233,6 @@ export default {
 }
 .filter-options {
   white-space: nowrap;
+  padding-left: 15px;
 }
 </style>

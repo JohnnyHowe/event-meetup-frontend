@@ -190,5 +190,6 @@ export default {
 }
 .filter-options {
   white-space: nowrap;
+  padding-left: 15px;
 }
 </style>
