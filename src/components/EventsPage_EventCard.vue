@@ -4,13 +4,15 @@
       <td id="text-col">
         <p id="title">{{ eventData.title }}</p>
         {{ timeString }}, {{ date.toDateString() }} <br />
-        Organizer: {{ eventData.organizerFirstName }} {{ eventData.organizerLastName
+        Organizer: {{ eventData.organizerFirstName }}
+        {{ eventData.organizerLastName }}<br />
+        Attendees: {{ eventData.numAcceptedAttendees }} / {{ eventData.capacity
         }}<br />
-        Attendees: {{ eventData.numAcceptedAttendees }} / {{ eventData.capacity }}<br />
         Categories: {{ eventData.categories }}
       </td>
     </table>
   </CardButton>
+  <!-- <img v-bind:src="imgSrc" v-bind:alt="eventData.eventId" /> -->
 </template>
 <script>
 import CardButton from "@/components/CardButton.vue";
@@ -19,11 +21,16 @@ export default {
   components: {
     CardButton,
   },
-  props: {
-    eventData: String,
+  props: ["eventData"],
+  data: function () {
+    return {
+      imgSrc: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
+    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
+        9TXL0Y4OHwAAAABJRU5ErkJggg==`,
+    };
   },
   mounted: function () {
-    this.loadEventInfo();
+    // this.loadEventInfo();
   },
   methods: {
     gotoEventPage() {
@@ -33,17 +40,14 @@ export default {
       this.getEventImage();
     },
     getEventImage() {
-      api.events.images
-        .get(this.eventData.eventId)
-        .then((res) => {
-          console.log(res);
-          // OwO got image
-        })
-        .catch((e) => {
-          // Cannot get the image, use default image
-          // console.log(e)
-          console.log(`${e.response.status} Error getting image for event ${this.eventData.eventId}`)
-        });
+      api.events.images.get(this.eventData.eventId).then((res) => {
+        this.imgSrc = `data:${res.headers["content-type"]};base64,${btoa(unescape(encodeURIComponent(res.data)))}`;
+      });
+      // .catch((e) => {
+      //   // Cannot get the image, use default image
+      //   // console.log(e)
+      //   console.log(`${e.response.status} Error getting image for event ${this.eventData.eventId}`)
+      // });
     },
   },
   computed: {
@@ -76,10 +80,5 @@ export default {
 }
 #title {
   font-size: 20px;
-}
-#eventData.img {
-  /* padding: 10px; */
-  margin: 0px;
-  height: 135px;
 }
 </style>

@@ -3,8 +3,8 @@ import { makeRequest } from "./helper.js";
 
 import images from "./events.images.js";
 
-async function get() {
-    return makeRequest(axios.get, "events")
+async function get(params) {
+    return makeRequest(axios.get, "events", params);
 }
 
 async function categories() {
