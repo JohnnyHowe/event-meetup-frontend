@@ -17,6 +17,7 @@
 <script>
 import CardButton from "@/components/CardButton.vue";
 import api from "@/api";
+import store from "@/store";
 export default {
   components: {
     CardButton,
@@ -34,21 +35,15 @@ export default {
     this.loadEventInfo();
   },
   methods: {
-    loadCategories() {
+    async loadCategories() {
       // I know this dumb but I'm on a time crunch here
       let s = "";
-      api.events.categories().then((res) => {
-        for (let id of this.eventData.categories) {
-          for (let c of res.data) {
-            if (c.id == id) {
-              s += c.name + ", ";
-            }
-          }
-        }
-        if (s.length > 0) {
-          this.categoryString = s.substring(0, s.length - 2);
-        }
-      });
+      for (let name of await store.getCategoryNames(this.eventData.categories)) {
+        s += name + ", ";
+      }
+      if (s.length > 2) {
+        this.categoryString = s.substring(0, s.length - 2);
+      }
     },
     gotoEventPage() {
       //   router.push({ path: `eventData./${this.event.eventId}` });

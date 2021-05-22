@@ -72,6 +72,7 @@
 import PageContent from "@/components/PageContent.vue";
 import FormInputBar from "@/components/FormInputBar.vue";
 import api from "@/api";
+import store from "@/store";
 export default {
   components: {
     PageContent,
@@ -116,24 +117,18 @@ export default {
           });
       }
     },
-    loadCategories() {
-      api.events
-        .categories()
-        .then((res) => {
-          let cs = new Array(res.data.length - 1);
-          for (const index in res.data) {
-            let category = res.data[index];
-            cs[category.id - 1] = {
-              name: category.name,
-              enabled: false,
-              id: category.id,
-            };
-          }
-          this.categoryOptions = cs;
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+    async loadCategories() {
+      let data = await store.getCategories();
+      let cs = new Array(data.length - 1);
+      for (const id in data) {
+        let name = data[id];
+        cs[id - 1] = {
+          name,
+          enabled: false,
+          id,
+        };
+      }
+      this.categoryOptions = cs;
     },
     convertTypes() {
       const form = Object.assign({}, this.form);
