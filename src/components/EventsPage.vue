@@ -66,7 +66,10 @@ export default {
           count: this.pageSize,
         })
         .then((res) => {
-          this.events = res.data;
+          this.events = this.filterForTitle(
+            res.data,
+            this.filters.searchString
+          );
         });
     },
     search() {
@@ -81,8 +84,20 @@ export default {
             this.filters.searchString === "" ? null : this.filters.searchString,
         })
         .then((res) => {
-          this.lastPageIndex = Math.floor(res.data.length / this.pageSize);
+          this.lastPageIndex = Math.floor(
+            this.filterForTitle(res.data, this.filters.searchString).length /
+              this.pageSize
+          );
         });
+    },
+    filterForTitle(events, q) {
+      let es = [];
+      for (let e of events) {
+        if (e.title.includes(q)) {
+          es.push(e);
+        }
+      }
+      return es;
     },
   },
 };
