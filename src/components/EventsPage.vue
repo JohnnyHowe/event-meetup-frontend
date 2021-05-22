@@ -43,6 +43,8 @@
       </tr>
     </table>
 
+    Showing {{showingEvents.length}} of {{events.length}} Results
+
     <!-- Show the events -->
     <div
       v-for="event in showingEvents"
