@@ -3,11 +3,11 @@
     <button v-if="value != 0" v-on:click="value = 0">First</button>
     <button v-if="value != 0" v-on:click="value -= 1">&lt;</button>
     <button>{{ value + 1 }}</button>
-    <button v-if="value != parseInt(lastPageIndex)" v-on:click="value += 1">
+    <button v-if="value < parseInt(lastPageIndex)" v-on:click="value += 1">
       &gt;
     </button>
     <button
-      v-if="value != parseInt(lastPageIndex)"
+      v-if="value < parseInt(lastPageIndex)"
       v-on:click="value = parseInt(lastPageIndex)"
     >
       Last

@@ -18,9 +18,14 @@
     <table class="filter-table">
       <tr>
         Filter By Categories:
-        <input v-model="filterByCategories" type="checkbox" />
+        <input
+          v-model="filterByCategories"
+          type="checkbox"
+          v-on:change="filterCategories"
+        />
       </tr>
       <tr v-if="filterByCategories">
+        Showing all events with one or more of the selected
         <div class="container">
           <div
             v-for="option in categoryOptions"
@@ -30,7 +35,7 @@
             {{ option.name }}
             <input
               v-model="option.enabled"
-              v-on:change="updateEnabledCategories"
+              v-on:change="filterCategories"
               type="checkbox"
             />
           </div>
@@ -39,12 +44,16 @@
     </table>
 
     <!-- Show the events -->
-    <div v-for="event in events" v-bind:key="event.eventId" class="event">
+    <div
+      v-for="event in showingEvents"
+      v-bind:key="event.eventId"
+      class="event"
+    >
       <EventsPage_Event v-bind:eventData="event" />
     </div>
     <Pagination
       v-model="pageIndex"
-      v-on:change="loadEvents"
+      v-on:change="changePage"
       v-bind:lastPageIndex="lastPageIndex"
     />
   </PageContent>
@@ -65,7 +74,9 @@ export default {
     return {
       filterByCategories: false,
       categoryOptions: [],
+      allEvents: [],
       events: [],
+      showingEvents: [],
       pageIndex: 0,
       pageSize: 10,
       lastPageIndex: 0,
@@ -93,21 +104,23 @@ export default {
       }
       this.categoryOptions = cs;
     },
-
+    changePage() {
+      this.pageIndex = Math.min(this.pageIndex, this.lastPageIndex);
+      this.showingEvents = this.events.slice(
+        this.pageSize * this.pageIndex,
+        this.pageSize * (1 + this.pageIndex)
+      );
+    },
+    onLoad() {
+      this.filterCategories();
+      this.changePage();
+    },
     loadEvents() {
-      api.events
-        .get({
-          q:
-            this.filters.searchString === "" ? null : this.filters.searchString,
-          startIndex: this.pageIndex * this.pageSize,
-          count: this.pageSize,
-        })
-        .then((res) => {
-          this.events = this.filterForTitle(
-            res.data,
-            this.filters.searchString
-          );
-        });
+      api.events.get().then((res) => {
+        this.events = this.filterForTitle(res.data, this.filters.searchString);
+        this.allEvents = this.events;
+        this.onLoad();
+      });
     },
     search() {
       this.pageIndex = 0;
@@ -115,17 +128,30 @@ export default {
       this.loadEvents();
     },
     setLastPageIndex() {
-      api.events
-        .get({
-          q:
-            this.filters.searchString === "" ? null : this.filters.searchString,
-        })
-        .then((res) => {
-          this.lastPageIndex = Math.floor(
-            this.filterForTitle(res.data, this.filters.searchString).length /
-              this.pageSize
-          );
-        });
+      this.lastPageIndex = Math.floor(this.events.length / this.pageSize);
+    },
+    async filterCategories() {
+      if (this.filterByCategories) {
+        let es = [];
+        for (let e of this.allEvents) {
+          let done = false;
+          for (let category of this.categoryOptions) {
+            if (category.enabled) {
+              if (e.categories.includes(parseInt(category.id))) {
+                es.push(e);
+                done = true;
+                break;
+              }
+            }
+          }
+          if (done) continue;
+        }
+        this.events = es;
+      } else {
+        this.events = this.allEvents;
+      }
+      this.setLastPageIndex();
+      this.changePage();
     },
     filterForTitle(events, q) {
       let es = [];
@@ -148,6 +174,7 @@ export default {
 }
 .filter-table {
   width: 100%;
+  text-align: left;
   /* border: 1px solid black; */
 }
 .grow {
@@ -156,6 +183,8 @@ export default {
 .container {
   display: flex;
   flex-wrap: wrap;
+  width: 90%;
+  padding-left: 10%;
 }
 .filter-options {
   white-space: nowrap;
