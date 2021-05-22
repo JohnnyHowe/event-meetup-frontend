@@ -46,13 +46,27 @@
       title="Requires Attendance Control"
       type="checkbox"
     />
-
     <table class="grow">
       <td>
-        <p style="text-align: right">Categories:</p>
+        <p style="text-align: right; width: 150px">Categories:</p>
       </td>
       <td style="padding-left: 4px; text-align: left">
-        <tr v-for="option in categoryOptions" v-bind:key="option.name">
+        <div class="container">
+          <div
+            v-for="option in categoryOptions"
+            v-bind:key="option.name"
+            class="filter-options"
+          >
+            {{ option.name }}
+            <input
+              v-model="option.enabled"
+              v-on:change="updateEnabledCategories"
+              type="checkbox"
+            />
+          </div>
+        </div>
+
+        <!-- <tr v-for="option in categoryOptions" v-bind:key="option.name">
           <input
             v-model="option.enabled"
             v-on:change="updateEnabledCategories"
@@ -61,7 +75,7 @@
           {{
             option.name
           }}
-        </tr>
+        </tr> -->
       </td>
     </table>
 
@@ -211,5 +225,12 @@ export default {
 }
 #errorMessage {
   color: red;
+}
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.filter-options {
+  white-space: nowrap;
 }
 </style>

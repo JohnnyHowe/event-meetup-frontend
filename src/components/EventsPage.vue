@@ -16,7 +16,26 @@
     </table>
     <!-- Other filters -->
     <table class="filter-table">
-      <tr></tr>
+      <tr>
+        Filter By Categories:
+        <input v-model="filterByCategories" type="checkbox" />
+      </tr>
+      <tr v-if="filterByCategories">
+        <div class="container">
+          <div
+            v-for="option in categoryOptions"
+            v-bind:key="option.name"
+            class="filter-options"
+          >
+            {{ option.name }}
+            <input
+              v-model="option.enabled"
+              v-on:change="updateEnabledCategories"
+              type="checkbox"
+            />
+          </div>
+        </div>
+      </tr>
     </table>
 
     <!-- Show the events -->
@@ -34,6 +53,7 @@
 import EventsPage_Event from "@/components/EventsPage_EventCard.vue";
 import PageContent from "@/components/PageContent.vue";
 import Pagination from "@/components/Pagination.vue";
+import store from "@/store";
 import api from "@/api";
 export default {
   components: {
@@ -43,6 +63,8 @@ export default {
   },
   data: function () {
     return {
+      filterByCategories: false,
+      categoryOptions: [],
       events: [],
       pageIndex: 0,
       pageSize: 10,
@@ -55,8 +77,23 @@ export default {
   mounted() {
     this.loadEvents();
     this.setLastPageIndex();
+    this.loadCategories();
   },
   methods: {
+    async loadCategories() {
+      let data = await store.getCategories();
+      let cs = new Array(data.length - 1);
+      for (const id in data) {
+        let name = data[id];
+        cs[id - 1] = {
+          name,
+          enabled: false,
+          id,
+        };
+      }
+      this.categoryOptions = cs;
+    },
+
     loadEvents() {
       api.events
         .get({
@@ -115,5 +152,12 @@ export default {
 }
 .grow {
   width: 100%;
+}
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.filter-options {
+  white-space: nowrap;
 }
 </style>
