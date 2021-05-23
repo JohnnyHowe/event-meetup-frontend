@@ -29,8 +29,16 @@ export async function makeRequest(method, endpoint, parameters, body) {
 function getParamterString(parameters, addNulls = false) {
     let string = "?";
     for (let key in parameters) {
-        if (parameters[key] != null || addNulls) {
-            string += `${key}=${parameters[key]}&`;
+        let obj = parameters[key];
+        if (obj != null || addNulls) {
+
+            if (Array.isArray(obj)) {
+                for (let i of obj) {
+                    string += `${key}=${i}&`;
+                }
+            } else {
+                string += `${key}=${obj}&`;
+            }
             string += "&"
         }
     }

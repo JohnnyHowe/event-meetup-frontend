@@ -47,6 +47,7 @@ export default {
       }
     },
     gotoEventPage() {
+      console.log("Go to ", `/events/${this.eventData.eventId}`)
         router.push({ path: `/events/${this.eventData.eventId}` });
     },
     loadEventInfo() {
@@ -85,6 +86,7 @@ export default {
 </script>
 <style scoped>
 #main {
+  margin-top: 5px;
 }
 #main-table {
   width: 100%;

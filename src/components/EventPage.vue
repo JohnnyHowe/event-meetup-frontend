@@ -58,8 +58,10 @@
       </tr>
       <tr v-if="attendees.length > 0">
         <strong>Attendees:</strong>
-          <button v-if="showAttendees" v-on:click="showAttendees = false">Hide</button>
-          <button v-else v-on:click="showAttendees = true">Show</button>
+        <button v-if="showAttendees" v-on:click="showAttendees = false">
+          Hide
+        </button>
+        <button v-else v-on:click="showAttendees = true">Show</button>
         <div v-if="showAttendees">
           <UserCard
             style="margin-bottom: 10px"
@@ -74,12 +76,25 @@
       </tr>
       <tr v-if="similarEvents.length > 0">
         <strong>Similar Events:</strong>
+        <button v-if="showSimilar" v-on:click="showSimilar = false">
+          Hide
+        </button>
+        <button v-else v-on:click="showSimilar = true">Show</button>
+
+        <div class="event" v-if="showSimilar">
+          <EventsPage_EventCard
+            v-for="event in similarEvents"
+            v-bind:key="event.eventId"
+            v-bind:eventData="event"
+          />
+        </div>
       </tr>
     </table>
   </PageContent>
 </template>
 <script>
 import PageContent from "@/components/PageContent.vue";
+import EventsPage_EventCard from "@/components/EventsPage_EventCard.vue";
 import UserCard from "@/components/UserCard.vue";
 import api from "@/api";
 import store from "@/store";
@@ -87,10 +102,12 @@ export default {
   components: {
     PageContent,
     UserCard,
+    EventsPage_EventCard,
   },
   data: function () {
     return {
       showAttendees: true,
+      showSimilar: true,
       eventId: this.$route.params.id,
       categoryString: null,
       dateString: null,
@@ -120,6 +137,7 @@ export default {
       this.setCategoriesString();
       this.setFeeString();
       this.loadAttendees();
+      this.loadSimilarEvents();
     },
     setDateString() {
       const ms = Date.parse(this.eventData.date);
@@ -151,6 +169,23 @@ export default {
         //   }
         // }
         // this.attendees = ats;
+      });
+    },
+    loadSimilarEvents() {
+      let ids = [];
+      for (let id of this.eventData.categories) {
+        ids.push(parseInt(id));
+      }
+      api.events.get({ categoryIds: ids }).then((res) => {
+        let ats = [];
+        for (let a of res.data) {
+          if (a.eventId == this.eventData.id) {
+            this.organizer = a;
+          } else {
+            ats.push(a);
+          }
+        }
+        this.similarEvents = ats;
       });
     },
   },
