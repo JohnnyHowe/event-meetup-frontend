@@ -1,10 +1,10 @@
 <template>
   <PageContent v-bind:title="eventData.title">
     <img
-    style="width:100%"
+      style="width: 100%"
       src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/HNL_Wiki_Wiki_Bus.jpg/440px-HNL_Wiki_Wiki_Bus.jpg"
     />
-    <p style="text-align: justify;">{{ eventData.description }}</p>
+    <p style="text-align: justify">{{ eventData.description }}</p>
     <table class="data-table">
       <tr>
         <strong>When:</strong>
@@ -58,12 +58,22 @@
       </tr>
       <tr v-if="attendees.length > 0">
         <strong>Attendees:</strong>
-        <UserCard
-          style="margin-bottom: 10px"
-          v-for="user in attendees"
-          v-bind:key="user.attendeeId"
-          v-bind:userData="user"
-        />
+          <button v-if="showAttendees" v-on:click="showAttendees = false">Hide</button>
+          <button v-else v-on:click="showAttendees = true">Show</button>
+        <div v-if="showAttendees">
+          <UserCard
+            style="margin-bottom: 10px"
+            v-for="user in attendees"
+            v-bind:key="user.attendeeId"
+            v-bind:userData="user"
+          />
+        </div>
+      </tr>
+      <tr>
+        <br />
+      </tr>
+      <tr v-if="similarEvents.length > 0">
+        <strong>Similar Events:</strong>
       </tr>
     </table>
   </PageContent>
@@ -80,6 +90,7 @@ export default {
   },
   data: function () {
     return {
+      showAttendees: true,
       eventId: this.$route.params.id,
       categoryString: null,
       dateString: null,
@@ -88,6 +99,7 @@ export default {
       eventData: {},
       attendees: [],
       organizer: {},
+      similarEvents: ["a"],
     };
   },
   mounted() {
@@ -99,9 +111,9 @@ export default {
       this.eventData = res.data;
 
       this.organizer = {
-           firstName: this.eventData.organizerFirstName,
-           lastName: this.eventData.organizerLastName,
-           attendeeId: this.eventData.organizerId,
+        firstName: this.eventData.organizerFirstName,
+        lastName: this.eventData.organizerLastName,
+        attendeeId: this.eventData.organizerId,
       };
 
       this.setDateString();
@@ -147,6 +159,6 @@ export default {
 <style scoped>
 .data-table {
   text-align: left;
-  width:100%;
+  width: 100%;
 }
 </style>
