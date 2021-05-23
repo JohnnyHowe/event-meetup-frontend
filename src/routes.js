@@ -1,6 +1,7 @@
 import { createWebHashHistory, createRouter } from 'vue-router'
 
 import EventsPage from "@/components/EventsPage.vue";
+import EventPage from "@/components/EventPage.vue";
 import RegisterPage from "@/components/RegisterPage.vue";
 import LoginPage from "@/components/LoginPage.vue";
 import CreateEvent from "@/components/CreateEvent.vue";
@@ -16,8 +17,9 @@ const router = createRouter({
         { path: "/register", component: RegisterPage },
         { path: "/login", component: LoginPage },
 
-        { path: "/events/add", component: CreateEvent, meta: {requiresAuth: true}},
         { path: "/events", component: EventsPage },
+        { path: "/events/:id", component: EventPage },
+        { path: "/events/add", component: CreateEvent, meta: {requiresAuth: true}},
     ],
 })
 

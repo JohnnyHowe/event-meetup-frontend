@@ -17,6 +17,7 @@
 <script>
 import CardButton from "@/components/CardButton.vue";
 import api from "@/api";
+import router from "@/routes";
 import store from "@/store";
 export default {
   components: {
@@ -46,7 +47,7 @@ export default {
       }
     },
     gotoEventPage() {
-      //   router.push({ path: `eventData./${this.event.eventId}` });
+        router.push({ path: `/events/${this.eventData.eventId}` });
     },
     loadEventInfo() {
       // this.getEventImage();
