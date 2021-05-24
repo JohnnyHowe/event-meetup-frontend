@@ -1,9 +1,6 @@
 <template>
   <PageContent v-bind:title="eventData.title">
-    <img
-      style="width: 100%"
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/HNL_Wiki_Wiki_Bus.jpg/440px-HNL_Wiki_Wiki_Bus.jpg"
-    />
+    <img style="width: 100%" v-bind:src="imgSrc" />
     <p style="text-align: justify">{{ eventData.description }}</p>
     <table class="data-table">
       <tr>
@@ -106,6 +103,7 @@ export default {
   },
   data: function () {
     return {
+      imgSrc: "",
       showAttendees: true,
       showSimilar: true,
       eventId: this.$route.params.id,
@@ -121,7 +119,7 @@ export default {
   },
   mounted() {
     this.loadEventInfo();
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
   },
   methods: {
     async loadEventInfo() {
@@ -134,6 +132,7 @@ export default {
         attendeeId: this.eventData.organizerId,
       };
 
+      this.loadImage();
       this.setDateString();
       this.setCategoriesString();
       this.setFeeString();
@@ -188,6 +187,14 @@ export default {
         }
         this.similarEvents = ats;
       });
+    },
+    loadImage() {
+      // api.events.images.get(this.eventId).then((res) => {
+      //   if (res.status == 200) {
+      //     imgSrc = ""
+      //   }
+      // });
+      this.imgSrc = api.events.images.getURL(this.eventId);
     },
   },
 };

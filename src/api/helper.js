@@ -9,7 +9,7 @@ const VERBOSE = true;
  * @param endpoint the endpoint to get data from. e.g. "events/1"
  */
 export async function makeRequest(method, endpoint, parameters, body) {
-    const url = process.env.VUE_APP_BACKEND_URL + "/" + endpoint + getParamterString(parameters);
+    const url = getURL(endpoint, parameters);
     if (VERBOSE) console.log("Talk to: " + url);
     const config = {
         headers: {
@@ -17,6 +17,10 @@ export async function makeRequest(method, endpoint, parameters, body) {
         }
     }
     return method(url, body, config);
+}
+
+export function getURL(endpoint, parameters) {
+    return process.env.VUE_APP_BACKEND_URL + "/" + endpoint + getParamterString(parameters);
 }
 
 /**
