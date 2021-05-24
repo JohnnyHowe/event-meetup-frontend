@@ -47,7 +47,6 @@ export default {
       }
     },
     gotoEventPage() {
-      console.log("Go to ", `/events/${this.eventData.eventId}`)
         router.push({ path: `/events/${this.eventData.eventId}` });
     },
     loadEventInfo() {
