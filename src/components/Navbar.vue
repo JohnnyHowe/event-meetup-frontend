@@ -12,7 +12,9 @@
         <div class="page-links" v-on:click="gotoEvents">Events</div>
       </td>
       <td>
-        <div class="page-links" v-if="isLoggedIn" v-on:click="gotoCreateEvent">Create Event</div>
+        <div class="page-links" v-if="isLoggedIn" v-on:click="gotoCreateEvent">
+          Create Event
+        </div>
       </td>
       <td style="width: 100%"></td>
       <div v-show="isLoggedIn">
@@ -48,9 +50,13 @@ export default {
       return store.isLoggedIn();
     },
     userFullName() {
-      return (
-        store.userStore.user.firstName + " " + store.userStore.user.lastName
-      );
+      if (store.isLoggedIn()) {
+        return (
+          store.userStore.user.firstName + " " + store.userStore.user.lastName
+        );
+      } else {
+        return "";
+      }
     },
   },
 };

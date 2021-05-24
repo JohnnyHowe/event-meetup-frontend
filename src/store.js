@@ -16,7 +16,7 @@ const userStore = {
     },
 
     isLoggedIn() {
-        return this.authToken;
+        return !this.authToken;
     },
 
     login(authToken, user) {
