@@ -1,6 +1,6 @@
 <template>
   <PageContent v-bind:title="eventData.title">
-    <img style="width: 100%" v-bind:src="imgSrc" />
+    <img v-if="imgSrc != null" style="width: 100%" v-bind:src="imgSrc" />
     <p style="text-align: justify">{{ eventData.description }}</p>
     <table class="data-table">
       <tr>
@@ -103,7 +103,7 @@ export default {
   },
   data: function () {
     return {
-      imgSrc: "",
+      imgSrc: null,
       showAttendees: true,
       showSimilar: true,
       eventId: this.$route.params.id,
@@ -194,7 +194,10 @@ export default {
       //     imgSrc = ""
       //   }
       // });
-      this.imgSrc = api.events.images.getURL(this.eventId);
+      // this.imgSrc = api.events.images.getURL(this.eventId);
+      api.events.images.getSafeURL(this.eventId).then((res) => {
+        this.imgSrc = res;
+      });
     },
   },
 };
