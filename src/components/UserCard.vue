@@ -1,7 +1,8 @@
 <template>
   <table class="main">
       <td>
-      <img src="@/../public/default-user.jpg"/>
+      <img v-if="imgSrc == null" src="@/../public/default-user.jpg"/>
+      <img v-else v-bind:src="imgSrc"/>
       </td>
       <td VALIGN="TOP" style="width:100%; padding:10px">
           <tr>
@@ -21,8 +22,24 @@
   </table>
 </template>
 <script>
+import api from "@/api";
 export default {
     props: ["userData"],
+    data: function() {
+      return {
+        imgSrc: null,
+      }
+    },
+    mounted() {
+      this.loadImg();
+    },
+    methods: {
+      loadImg() {
+      api.users.images.getSafeURL(this.userData.attendeeId).then((res) => {
+        this.imgSrc = res;
+      })
+      }
+    }
 };
 </script>
 <style scoped>

@@ -38,7 +38,7 @@ const store = reactive({
     categories: null,    // list of all categories, index = id
 
     isLoggedIn() {
-        return this.userStore.isLoggedIn();
+        return !!this.userStore.isLoggedIn();
     },
 
     async getCategories() {

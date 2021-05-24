@@ -1,18 +1,37 @@
 <template>
   <CardButton v-on:click="gotoEventPage">
     <table id="main-table">
-      <td id="text-col">
-        <p id="title">{{ eventData.title }}</p>
-        {{ timeString }}, {{ date.toDateString() }} <br />
-        Organizer: {{ eventData.organizerFirstName }}
-        {{ eventData.organizerLastName }}<br />
-        Attendees: {{ eventData.numAcceptedAttendees }} / {{ eventData.capacity
-        }}<br />
-        Categories: {{ categoryString }}
-      </td>
+      <tr>
+        <td>
+          <img
+            v-if="imgSrc != null"
+            class="event-image"
+            v-bind:src="imgSrc"
+            v-bind:alt="eventData.eventId"
+          />
+          <img v-else class="event-image" src="@/../public/default-event.jpg" />
+        </td>
+        <td id="text-col">
+          <p id="title">{{ eventData.title }}</p>
+          {{ timeString }}, {{ date.toDateString() }} <br />
+          Organizer: {{ eventData.organizerFirstName }}
+          {{ eventData.organizerLastName }}<br />
+          Attendees: {{ eventData.numAcceptedAttendees }} /
+          {{ eventData.capacity }}<br />
+          Categories: {{ categoryString }}
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align: right" v-if="userImg">
+          <img class="user-image" v-bind:src="userImg" />
+        </td>
+        <td style="text-align: right" v-else>
+          <img class="user-image" src="@/../public/default-user.jpg" />
+        </td>
+        <td>{{organizerName}}</td>
+      </tr>
     </table>
   </CardButton>
-  <!-- <img v-bind:src="imgSrc" v-bind:alt="eventData.eventId" /> -->
 </template>
 <script>
 import CardButton from "@/components/CardButton.vue";
@@ -26,9 +45,9 @@ export default {
   props: ["eventData"],
   data: function () {
     return {
-      imgSrc: `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
-    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
-        9TXL0Y4OHwAAAABJRU5ErkJggg==`,
+      imgSrc: null,
+      userImg: null,
+      organizerName: "",
       categoryString: "",
     };
   },
@@ -39,7 +58,9 @@ export default {
     async loadCategories() {
       // I know this dumb but I'm on a time crunch here
       let s = "";
-      for (let name of await store.getCategoryNames(this.eventData.categories)) {
+      for (let name of await store.getCategoryNames(
+        this.eventData.categories
+      )) {
         s += name + ", ";
       }
       if (s.length > 2) {
@@ -47,23 +68,23 @@ export default {
       }
     },
     gotoEventPage() {
-        router.push({ path: `/events/${this.eventData.eventId}` });
+      router.push({ path: `/events/${this.eventData.eventId}` });
     },
     loadEventInfo() {
-      // this.getEventImage();
+      this.loadEventImage();
       this.loadCategories();
+      this.loadOrganizer();
     },
-    getEventImage() {
-      api.events.images.get(this.eventData.eventId).then((res) => {
-        this.imgSrc = `data:${res.headers["content-type"]};base64,${btoa(
-          unescape(encodeURIComponent(res.data))
-        )}`;
+    loadEventImage() {
+      api.events.images.getSafeURL(this.eventData.eventId).then((res) => {
+        this.imgSrc = res;
       });
-      // .catch((e) => {
-      //   // Cannot get the image, use default image
-      //   // console.log(e)
-      //   console.log(`${e.response.status} Error getting image for event ${this.eventData.eventId}`)
-      // });
+    },
+    loadOrganizer() {
+      this.organizerName = this.eventData.organizerFirstName + " " + this.eventData.organizerLastName;
+      api.users.images.getSafeURL(this.eventData.organizerId).then((res) => {
+        this.userImg = res;
+      });
     },
   },
   computed: {
@@ -97,5 +118,13 @@ export default {
 }
 #title {
   font-size: 20px;
+}
+.event-image {
+  height: 150px;
+  width: 150px;
+}
+.user-image {
+  height: 50px;
+  width: 50px;
 }
 </style>

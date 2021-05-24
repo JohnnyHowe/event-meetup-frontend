@@ -158,17 +158,8 @@ export default {
       }
     },
     loadAttendees() {
-      //   let ats = [];
       api.events.attendees.get(this.eventId).then((e) => {
         this.attendees = e.data;
-        // for (let a of e.data) {
-        //   if (a.attendeeId == this.eventData.organizerId) {
-        //     this.organizer = a;
-        //   } else {
-        //     ats.push(a);
-        //   }
-        // }
-        // this.attendees = ats;
       });
     },
     loadSimilarEvents() {
@@ -179,9 +170,7 @@ export default {
       api.events.get({ categoryIds: ids }).then((res) => {
         let ats = [];
         for (let a of res.data) {
-          if (a.eventId == this.eventData.id) {
-            this.organizer = a;
-          } else {
+          if (a.eventId != this.eventData.id) {
             ats.push(a);
           }
         }

@@ -3,11 +3,11 @@ import { makeRequest } from "./helper.js";
 import { getURL as rawGetURL } from "./helper.js";
 
 async function get(id) {
-    return makeRequest(axios.get, `events/${id}/image`);
+    return makeRequest(axios.get, `users/${id}/image`);
 }
 
 function getURL(id) {
-    return rawGetURL(`events/${id}/image`)
+    return rawGetURL(`users/${id}/image`)
 }
 
 async function getSafeURL(id) {

@@ -45,7 +45,6 @@ export default {
   },
   computed: {
     isLoggedIn() {
-      console.log("logged in");
       return store.isLoggedIn();
     },
     userFullName() {

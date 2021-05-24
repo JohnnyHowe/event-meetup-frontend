@@ -2,6 +2,8 @@ import axios from "axios";
 import { makeRequest } from "./helper.js";
 import store from "@/store";
 
+import images from "./users.images.js";
+
 /**
  * Given a POJO form containing an email, firstName, lastName and password, tell server to make a user
  * form example: {
@@ -45,4 +47,4 @@ async function get(userId) {
     return makeRequest(axios.get, `users/${userId}`);
 }
 
-export default { register, login, get };
+export default { images, register, login, get };
