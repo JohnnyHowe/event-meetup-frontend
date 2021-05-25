@@ -78,7 +78,6 @@ export default {
     },
     fileChange(e) {
       this.image = e.target.files[0];
-      this.trySendImage(0)
     }
 
   },

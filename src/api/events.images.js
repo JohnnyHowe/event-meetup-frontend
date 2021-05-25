@@ -1,9 +1,18 @@
 import axios from "axios";
-import { makeRequest } from "./helper.js";
+import { makeRequest, readImage } from "./helper.js";
 import { getURL as rawGetURL } from "./helper.js";
 
 async function get(id) {
     return makeRequest(axios.get, `events/${id}/image`);
+}
+
+/**
+ * Send image
+ * Takes image as the html thing, nothing fancy
+ */
+async function put(id, image) {
+    const img = await readImage(image)
+    makeRequest(axios.put, `events/${id}/image`, {}, img, {"Content-Type": image.type});
 }
 
 function getURL(id) {
@@ -22,4 +31,4 @@ async function getSafeURL(id) {
 }
 
 
-export default { get, getURL, getSafeURL }
+export default { get, getURL, getSafeURL, put }

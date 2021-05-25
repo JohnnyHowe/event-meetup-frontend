@@ -13,7 +13,6 @@ async function get(id) {
  */
 async function put(id, image) {
     const img = await readImage(image)
-    console.log(img)
     makeRequest(axios.put, `users/${id}/image`, {}, img, {"Content-Type": image.type});
 }
 

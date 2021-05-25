@@ -46,6 +46,12 @@
       title="Requires Attendance Control"
       type="checkbox"
     />
+    <FormInputBar
+      v-on:change="fileChange"
+      title="Image*"
+      type="file"
+      accept=".png,.jpg,.jpeg,.giff"
+    />
     <table class="grow">
       <td>
         <p style="text-align: right; width: 150px">Categories:</p>
@@ -97,6 +103,7 @@ export default {
   },
   data: function () {
     return {
+      image: null,
       categoryOptions: [],
       errorMessages: [],
       date: "",
@@ -117,13 +124,14 @@ export default {
     };
   },
   methods: {
-    onSubmit() {
+    async onSubmit() {
       let form = this.convertTypes();
       if (this.errorChecking(form)) {
         this.errorMessages = [];
         api.events
           .add(form)
-          .then(() => {
+          .then((res) => {
+            this.trySendImage(res.data.eventId);
             this.$router.push("/events");
           })
           .catch((e) => {
@@ -185,9 +193,13 @@ export default {
       if (form.categoryIds.length == 0)
         this.errorMessages.push("At least one category required");
 
-      // fee 
+      // fee
       if (parseFloat(form.fee) < 0)
         this.errorMessages.push("Fee cannot be negative");
+
+      // Image
+      if (this.image == null)
+        this.errorMessages.push("Image required")
 
       return this.errorMessages.length == 0;
     },
@@ -220,6 +232,12 @@ export default {
         }
       }
       return categories;
+    },
+    async trySendImage(id) {
+      api.events.images.put(id, this.image);
+    },
+    fileChange(e) {
+      this.image = e.target.files[0];
     },
   },
 };
