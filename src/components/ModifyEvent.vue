@@ -71,21 +71,10 @@
             />
           </div>
         </div>
-
-        <!-- <tr v-for="option in categoryOptions" v-bind:key="option.name">
-          <input
-            v-model="option.enabled"
-            v-on:change="updateEnabledCategories"
-            type="checkbox"
-          />
-          {{
-            option.name
-          }}
-        </tr> -->
       </td>
     </table>
 
-    <button v-on:click="onSubmit">Submit</button>
+    <!-- <button v-on:click="onSubmit">Submit</button> -->
   </PageContent>
 </template>
 <script>
@@ -100,9 +89,11 @@ export default {
   },
   mounted: function () {
     this.loadCategories();
+    this.loadIniialData();
   },
   data: function () {
     return {
+      id: null,
       image: null,
       categoryOptions: [],
       errorMessages: [],
@@ -125,19 +116,48 @@ export default {
   },
   methods: {
     async onSubmit() {
-      let form = this.convertTypes();
-      if (this.errorChecking(form)) {
-        this.errorMessages = [];
-        api.events
-          .add(form)
-          .then((res) => {
-            this.trySendImage(res.data.eventId);
-            this.$router.push("/events");
-          })
-          .catch((e) => {
-            this.errorMessages = [e.response.statusText];
-          });
-      }
+        console.log(this.date)
+        console.log(this.time)
+      // let form = this.convertTypes();
+      // if (this.errorChecking(form)) {
+      //   this.errorMessages = [];
+      //   api.events
+      //     .add(form)
+      //     .then((res) => {
+      //       this.trySendImage(res.data.eventId);
+      //       this.$router.push("/events");
+      //     })
+      //     .catch((e) => {
+      //       this.errorMessages = [e.response.statusText];
+      //     });
+      // }
+    },
+    loadIniialData() {
+      this.id = this.$route.params.id;
+      api.events.getOne(this.id).then((res)  => {
+        this.eventData = res.data;
+        
+        this.form.title = this.eventData.title;
+        this.form.description = this.eventData.description;
+        this.form.hasMaxCapacity = this.eventData.hasMaxCapacity;
+        this.form.isOnline = this.eventData.isOnline;
+        this.form.venue = this.eventData.venue;
+        this.form.url = this.eventData.url;
+        this.form.fee = this.eventData.fee;
+        this.form.requiresAttendanceControl = this.eventData.requiresAttendanceControl;
+
+        // categories
+        for (let id of this.eventData.categories) {
+          this.categoryOptions[id - 1].enabled = true;
+        }
+
+      // date
+        const d = new Date(this.eventData.date);
+        const ds = `${d.getFullYear()}-${d.getMonth().toString().padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`
+        const ts = `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`
+        this.date = ds;
+        this.time = ts;
+      })
     },
     async loadCategories() {
       let data = await store.getCategories();

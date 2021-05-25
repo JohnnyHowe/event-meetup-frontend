@@ -61,6 +61,11 @@ export default {
     ivalue: function () {
       this.$emit("update:modelValue", this.ivalue);
     },
+    modelValue: function() {
+      if (this.modelValue != this.ivalue) {
+        this.ivalue = this.modelValue;
+      }
+    }
   },
 };
 </script>
