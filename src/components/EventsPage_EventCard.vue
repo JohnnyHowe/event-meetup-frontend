@@ -54,6 +54,7 @@ export default {
   mounted: function () {
     this.loadEventImage();
     this.loadCategories();
+    this.loadOrganizer();
   },
   methods: {
     async loadCategories() {
@@ -82,7 +83,7 @@ export default {
         " " +
         this.eventData.organizerLastName;
       api.users.images
-        .getSafeURL(this.fullEventData.organizerId)
+        .getSafeURL(this.eventData.organizerId)
         .then((res) => {
           this.userImg = res;
         });

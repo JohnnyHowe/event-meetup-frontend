@@ -32,10 +32,10 @@ export default {
       errorMessages: [],
       image: null,
       form: {
-        firstName: "o",
-        lastName: "j",
-        email: "b@b.b",
-        password: "bbbbbbbb",
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
       },
     };
   },
