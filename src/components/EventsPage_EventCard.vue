@@ -7,7 +7,7 @@
             v-if="imgSrc != null"
             class="event-image"
             v-bind:src="imgSrc"
-            v-bind:alt="eventData.eventId"
+            v-bind:alt="eventData.id"
           />
           <img v-else class="event-image" src="@/../public/default-event.jpg" />
         </td>
@@ -49,11 +49,11 @@ export default {
       userImg: null,
       organizerName: "",
       categoryString: "",
-      fullEventData: null,
     };
   },
   mounted: function () {
-    this.loadEventInfo();
+    this.loadEventImage();
+    this.loadCategories();
   },
   methods: {
     async loadCategories() {
@@ -69,21 +69,10 @@ export default {
       }
     },
     gotoEventPage() {
-      router.push({ path: `/events/${this.eventData.eventId}` });
-    },
-    async loadEventInfo() {
-      this.fullEventData = api.events
-        .getOne(this.eventData.eventId)
-        .then((res) => {
-          this.fullEventData = res.data;
-          this.loadOrganizer();
-        });
-
-      this.loadEventImage();
-      this.loadCategories();
+      router.push({ path: `/events/${this.eventData.id}` });
     },
     loadEventImage() {
-      api.events.images.getSafeURL(this.eventData.eventId).then((res) => {
+      api.events.images.getSafeURL(this.eventData.id).then((res) => {
         this.imgSrc = res;
       });
     },
@@ -92,9 +81,11 @@ export default {
         this.eventData.organizerFirstName +
         " " +
         this.eventData.organizerLastName;
-      api.users.images.getSafeURL(this.fullEventData.organizerId).then((res) => {
-        this.userImg = res;
-      });
+      api.users.images
+        .getSafeURL(this.fullEventData.organizerId)
+        .then((res) => {
+          this.userImg = res;
+        });
     },
   },
   computed: {

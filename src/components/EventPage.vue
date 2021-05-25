@@ -18,11 +18,7 @@
       <tr>
         <strong>Attendees:</strong>
         {{
-          eventData.attendeeCount
-        }}
-        out of
-        {{
-          eventData.capacity
+          attendeeString
         }}
       </tr>
       <tr v-if="eventData.isOnline">
@@ -162,31 +158,67 @@ export default {
         this.attendees = e.data;
       });
     },
-    loadSimilarEvents() {
+    async loadSimilarEvents() {
       let ids = [];
       for (let id of this.eventData.categories) {
         ids.push(parseInt(id));
       }
-      api.events.get({ categoryIds: ids }).then((res) => {
-        let ats = [];
-        for (let a of res.data) {
-          if (a.eventId != this.eventData.id) {
-            ats.push(a);
-          }
+      let res = await api.events.get({ categoryIds: ids });
+
+      // Load full event data
+      let fullEvents = [];
+      let responses = 0;
+      for (let event of res.data) {
+        api.events
+          .getOne(event.eventId)
+          .then((res2) => {
+            fullEvents.push(res2.data);
+
+            responses += 1;
+            if (responses == res.data.length) {
+              this.onAllEventsLoaded(fullEvents);
+            }
+          })
+          .catch(() => {
+            responses += 1;
+            if (responses == res.data.length) {
+              this.onAllEventsLoaded(fullEvents);
+            }
+          });
+      }
+    },
+    onAllEventsLoaded(events) {
+      let sorted = [];
+      for (let event of events) {
+        if (new Date(event.date) >= new Date() && event.id != this.eventData.id) {
+          sorted.push(event);
         }
-        this.similarEvents = ats;
-      });
+      }
+      this.similarEvents = sorted;
     },
     loadImage() {
-      // api.events.images.get(this.eventId).then((res) => {
-      //   if (res.status == 200) {
-      //     imgSrc = ""
-      //   }
-      // });
-      // this.imgSrc = api.events.images.getURL(this.eventId);
       api.events.images.getSafeURL(this.eventId).then((res) => {
         this.imgSrc = res;
       });
+    },
+  },
+  computed: {
+    attendeeString() {
+      if (this.eventData.capacity == null) {
+        if (this.eventData.attendeeCount != null) {
+          return this.eventData.attendeeCount;
+        } else {
+          return "0";
+        }
+      } else {
+        if (this.eventData.attendeeCount != null) {
+          return (
+            this.eventData.attendeeCount + " out of " + this.eventData.capacity
+          );
+        } else {
+          return "0 out of " + this.eventData.capacity;
+        }
+      }
     },
   },
 };

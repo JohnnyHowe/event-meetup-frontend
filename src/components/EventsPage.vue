@@ -162,10 +162,41 @@ export default {
       let sort = "DATE_ASC";
       if (this.sortBy === "Date Far") sort = "DATE_DESC";
       let res = await api.events.get({ sortBy: sort });
-      this.events = this.filterForTitle(res.data, this.filters.searchString);
-      this.allEvents = this.events;
+      let rawEvents = this.filterForTitle(res.data, this.filters.searchString);
+
+      // Load full event data
+      let fullEvents = [];
+      let responses = 0;
+      for (let event of rawEvents) {
+        api.events
+          .getOne(event.eventId)
+          .then((res) => {
+            fullEvents.push(res.data);
+            responses += 1;
+
+            if (responses == rawEvents.length) {
+              this.onAllEventsLoaded(fullEvents);
+            }
+          })
+          .catch(() => {
+            responses += 1;
+            if (responses == rawEvents.length) {
+              this.onAllEventsLoaded(fullEvents);
+            }
+          });
+      }
+    },
+    onAllEventsLoaded(events) {
+      let sorted = [];
+      for (let event of events) {
+        if (new Date(event.date) >= new Date()) {
+          sorted.push(event);
+        }
+      }
+      this.events = sorted;
+      this.allEvents = sorted;
+
       this.onLoad();
-      return res;
     },
     search() {
       this.pageIndex = 0;
@@ -173,7 +204,7 @@ export default {
       this.loadEvents();
     },
     setLastPageIndex() {
-      this.lastPageIndex = Math.floor(this.events.length / this.pageSize);
+      this.lastPageIndex = Math.floor((this.events.length - 1) / this.pageSize);
     },
     async filterCategories() {
       if (this.filterByCategories) {
