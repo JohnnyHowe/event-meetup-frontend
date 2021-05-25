@@ -1,6 +1,6 @@
 
 import store from "@/store";
-const VERBOSE = true;
+const VERBOSE = false;
 
 /**
  * Do a get, put, or whatever

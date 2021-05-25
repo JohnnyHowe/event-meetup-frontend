@@ -1,5 +1,8 @@
 <template>
   <PageContent v-bind:title="eventData.title">
+    <button v-on:click="editEvent" style="width: 100%" v-if="actingAsOrganizer">
+      Edit Event
+    </button>
     <img v-if="imgSrc != null" style="width: 100%" v-bind:src="imgSrc" />
     <p style="text-align: justify">{{ eventData.description }}</p>
     <table class="data-table">
@@ -89,6 +92,7 @@
 import PageContent from "@/components/PageContent.vue";
 import EventsPage_EventCard from "@/components/EventsPage_EventCard.vue";
 import UserCard from "@/components/UserCard.vue";
+import router from "@/routes";
 import api from "@/api";
 import store from "@/store";
 export default {
@@ -111,6 +115,7 @@ export default {
       attendees: [],
       organizer: null,
       similarEvents: [],
+      actingAsOrganizer: false,
     };
   },
   mounted() {
@@ -128,12 +133,16 @@ export default {
         attendeeId: this.eventData.organizerId,
       };
 
+      this.setIsActingAsOrganizer();
       this.loadImage();
       this.setDateString();
       this.setCategoriesString();
       this.setFeeString();
       this.loadAttendees();
       this.loadSimilarEvents();
+    },
+    editEvent() {
+      router.push(`/events/${this.eventId}/edit`);
     },
     setDateString() {
       const ms = Date.parse(this.eventData.date);
@@ -190,7 +199,10 @@ export default {
     onAllEventsLoaded(events) {
       let sorted = [];
       for (let event of events) {
-        if (new Date(event.date) >= new Date() && event.id != this.eventData.id) {
+        if (
+          new Date(event.date) >= new Date() &&
+          event.id != this.eventData.id
+        ) {
           sorted.push(event);
         }
       }
@@ -200,6 +212,9 @@ export default {
       api.events.images.getSafeURL(this.eventId).then((res) => {
         this.imgSrc = res;
       });
+    },
+    setIsActingAsOrganizer() {
+      this.actingAsOrganizer = store.loggedInAs(this.organizer.attendeeId);
     },
   },
   computed: {
