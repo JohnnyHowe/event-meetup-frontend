@@ -16,7 +16,7 @@ const userStore = {
     },
 
     isLoggedIn() {
-        return !this.authToken;
+        return this.authToken != null && this.authToken !== "null";
     },
 
     login(authToken, user) {
@@ -38,7 +38,7 @@ const store = reactive({
     categories: null,    // list of all categories, index = id
 
     isLoggedIn() {
-        return !!this.userStore.isLoggedIn();
+        return this.userStore.isLoggedIn();
     },
 
     async getCategories() {

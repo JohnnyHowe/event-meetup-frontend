@@ -8,14 +8,15 @@ const VERBOSE = true;
  * @param method axios method to call
  * @param endpoint the endpoint to get data from. e.g. "events/1"
  */
-export async function makeRequest(method, endpoint, parameters, body) {
+export async function makeRequest(method, endpoint, parameters, body, headers) {
     const url = getURL(endpoint, parameters);
     if (VERBOSE) console.log("Talk to: " + url);
-    const config = {
+    let config = {
         headers: {
             'X-Authorization': store.userStore.authToken,
         }
     }
+    config.headers = Object.assign(config.headers, headers);
     return method(url, body, config);
 }
 
@@ -47,4 +48,16 @@ function getParamterString(parameters, addNulls = false) {
         }
     }
     return string.substr(0, string.length - 2);
+}
+
+export async function readImage(imageBlob) {
+    return blobToData(imageBlob);
+}
+
+const blobToData = (blob) => {
+    return new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.onloadend = () => resolve(reader.result)
+        reader.readAsArrayBuffer(blob)
+    })
 }

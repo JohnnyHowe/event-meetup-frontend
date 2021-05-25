@@ -3,12 +3,11 @@
     <p v-for="msg in errorMessages" v-bind:key="msg" id="errorMessage">
       {{ msg }}
     </p>
-    <p id="errorMessage">{{ errorMessage }}</p>
     <FormInputBar v-model="form.firstName" title="First name" />
     <FormInputBar v-model="form.lastName" title="Last name" />
     <FormInputBar v-model="form.email" title="Email" />
     <FormInputBar v-model="form.password" title="Password" type="password" />
-<input type="file" accept=".png,.jpg,.jpeg,.giff" />
+    <FormInputBar v-on:change="fileChange" title="Image" type="file" accept=".png,.jpg,.jpeg,.giff" />
     <br />
     <br />
     <button v-on:click="onSubmit">Register</button>
@@ -31,11 +30,12 @@ export default {
   data: function () {
     return {
       errorMessages: [],
+      image: null,
       form: {
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
+        firstName: "o",
+        lastName: "j",
+        email: "b@b.b",
+        password: "bbbbbbbb",
       },
     };
   },
@@ -44,8 +44,9 @@ export default {
       if (this.checkFields()) {
         api.users
           .register(this.form)
-          .then(() => {
-            this.errorMessage = "";
+          .then((res) => {
+            this.errorMessages = [];
+            this.trySendImage(res.data.userId);
             this.$router.push("events");
           })
           .catch((e) => {
@@ -72,6 +73,14 @@ export default {
     gotoLoginPage() {
       this.$router.push("login");
     },
+    async trySendImage(id) {
+      api.users.images.put(id, this.image)
+    },
+    fileChange(e) {
+      this.image = e.target.files[0];
+      this.trySendImage(0)
+    }
+
   },
 };
 </script>

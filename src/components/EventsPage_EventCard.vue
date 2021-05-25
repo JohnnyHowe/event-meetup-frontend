@@ -28,7 +28,7 @@
         <td style="text-align: right" v-else>
           <img class="user-image" src="@/../public/default-user.jpg" />
         </td>
-        <td>{{organizerName}}</td>
+        <td>{{ organizerName }}</td>
       </tr>
     </table>
   </CardButton>
@@ -49,6 +49,7 @@ export default {
       userImg: null,
       organizerName: "",
       categoryString: "",
+      fullEventData: null,
     };
   },
   mounted: function () {
@@ -70,10 +71,16 @@ export default {
     gotoEventPage() {
       router.push({ path: `/events/${this.eventData.eventId}` });
     },
-    loadEventInfo() {
+    async loadEventInfo() {
+      this.fullEventData = api.events
+        .getOne(this.eventData.eventId)
+        .then((res) => {
+          this.fullEventData = res.data;
+          this.loadOrganizer();
+        });
+
       this.loadEventImage();
       this.loadCategories();
-      this.loadOrganizer();
     },
     loadEventImage() {
       api.events.images.getSafeURL(this.eventData.eventId).then((res) => {
@@ -81,8 +88,11 @@ export default {
       });
     },
     loadOrganizer() {
-      this.organizerName = this.eventData.organizerFirstName + " " + this.eventData.organizerLastName;
-      api.users.images.getSafeURL(this.eventData.organizerId).then((res) => {
+      this.organizerName =
+        this.eventData.organizerFirstName +
+        " " +
+        this.eventData.organizerLastName;
+      api.users.images.getSafeURL(this.fullEventData.organizerId).then((res) => {
         this.userImg = res;
       });
     },

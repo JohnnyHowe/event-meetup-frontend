@@ -5,8 +5,24 @@
       <td v-if="type === 'textarea'" class="input-cell">
         <textarea v-model="ivalue" class="input-box" v-bind:type="type" />
       </td>
-      <td v-else-if="type === 'checkbox'" class="input-cell" style="text-align:left">
-        <input v-model="ivalue" style="text-align:left" v-bind:type="type" />
+      <td
+        v-else-if="type === 'checkbox'"
+        class="input-cell"
+        style="text-align: left"
+      >
+        <input v-model="ivalue" style="text-align: left" v-bind:type="type" />
+      </td>
+      <td
+        v-else-if="type === 'file'"
+        class="input-cell"
+        style="text-align: left"
+      >
+        <input
+          v-model="ivalue"
+          style="text-align: left"
+          v-bind:type="type"
+          v-bind:accept="accept"
+        />
       </td>
       <td v-else class="input-cell">
         <input v-model="ivalue" class="input-box" v-bind:type="type" />
@@ -23,7 +39,10 @@ export default {
       type: String,
       default: "text",
     },
-    data: {},
+    accept: {
+      type: String,
+      default: null,
+    },
   },
   mounted: function () {
     this.ivalue = this.modelValue;
