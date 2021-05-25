@@ -45,7 +45,7 @@
         <br />
         <br />
       </tr>
-      <tr>
+      <tr v-if="organizer != null">
         <strong>Organizer:</strong>
         <UserCard v-bind:userData="organizer" />
       </tr>
@@ -113,7 +113,7 @@ export default {
       attendeesString: null,
       eventData: {},
       attendees: [],
-      organizer: {},
+      organizer: null,
       similarEvents: [],
     };
   },

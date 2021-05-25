@@ -35,6 +35,7 @@ export default {
     },
     methods: {
       loadImg() {
+        console.log("Get ", this.userData.attendeeId, this.userData)
       api.users.images.getSafeURL(this.userData.attendeeId).then((res) => {
         this.imgSrc = res;
       })

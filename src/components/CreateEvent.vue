@@ -185,6 +185,10 @@ export default {
       if (form.categoryIds.length == 0)
         this.errorMessages.push("At least one category required");
 
+      // fee 
+      if (parseFloat(form.fee) < 0)
+        this.errorMessages.push("Fee cannot be negative");
+
       return this.errorMessages.length == 0;
     },
     getDateTimeObject() {
