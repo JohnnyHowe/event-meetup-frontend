@@ -95,6 +95,7 @@ import UserCard from "@/components/UserCard.vue";
 import router from "@/routes";
 import api from "@/api";
 import store from "@/store";
+import { getPretty } from "@/utils/date";
 export default {
   components: {
     PageContent,
@@ -145,10 +146,7 @@ export default {
       router.push(`/events/${this.eventId}/edit`);
     },
     setDateString() {
-      const ms = Date.parse(this.eventData.date);
-      const date = new Date();
-      date.setTime(ms);
-      this.dateString = date.toString();
+      this.dateString = getPretty(this.eventData.date);
     },
     setCategoriesString() {
       store.getCategoryNames(this.eventData.categories).then((e) => {

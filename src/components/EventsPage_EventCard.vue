@@ -13,7 +13,7 @@
         </td>
         <td id="text-col">
           <p id="title">{{ eventData.title }}</p>
-          {{ timeString }}, {{ date.toDateString() }} <br />
+          {{ getDateStr() }} <br />
           Organizer: {{ eventData.organizerFirstName }}
           {{ eventData.organizerLastName }}<br />
           Attendees: {{ eventData.numAcceptedAttendees }} /
@@ -38,6 +38,7 @@ import CardButton from "@/components/CardButton.vue";
 import api from "@/api";
 import router from "@/routes";
 import store from "@/store";
+import { getPretty } from "@/utils/date";
 export default {
   components: {
     CardButton,
@@ -57,6 +58,9 @@ export default {
     this.loadOrganizer();
   },
   methods: {
+    getDateStr() {
+      return getPretty(this.eventData.date);
+    },
     async loadCategories() {
       // I know this dumb but I'm on a time crunch here
       let s = "";
@@ -82,26 +86,9 @@ export default {
         this.eventData.organizerFirstName +
         " " +
         this.eventData.organizerLastName;
-      api.users.images
-        .getSafeURL(this.eventData.organizerId)
-        .then((res) => {
-          this.userImg = res;
-        });
-    },
-  },
-  computed: {
-    date: function () {
-      return new Date(this.$props.eventData.date);
-    },
-    /**
-     * Get a string repsenenting the time in the format [h]h:mm[am|pm]
-     * e.g. 6:05pm
-     */
-    timeString: function () {
-      let postFix = this.date.getHours() <= 11 ? "am" : "pm";
-      let minutes = this.date.getMinutes().toString();
-      if (minutes.length == 1) minutes = "0" + minutes;
-      return `${this.date.getHours() % 13}:${minutes}${postFix}`;
+      api.users.images.getSafeURL(this.eventData.organizerId).then((res) => {
+        this.userImg = res;
+      });
     },
   },
 };

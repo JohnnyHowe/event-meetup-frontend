@@ -85,13 +85,13 @@ import FormInputBar from "@/components/FormInputBar.vue";
 import api from "@/api";
 import store from "@/store";
 import router from "@/routes";
+import {getInputFormatString} from "@/utils/date";
 export default {
   components: {
     PageContent,
     FormInputBar,
   },
   mounted: function () {
-    this.loadCategories();
     this.loadIniialData();
   },
   data: function () {
@@ -136,11 +136,10 @@ export default {
           });
       }
     },
-    loadIniialData() {
+    async loadIniialData() {
       this.id = this.$route.params.id;
-      api.events.getOne(this.id).then((res) => {
+      api.events.getOne(this.id).then(async (res) => {
         this.eventData = res.data;
-
         // Are we definitely the organizer?
         if (!store.loggedInAs(this.eventData.organizerId)) {
           router.push("/events");
@@ -158,23 +157,20 @@ export default {
         this.capacity = this.eventData.capacity;
 
         // categories
+        await this.loadCategories();
         for (let id of this.eventData.categories) {
           this.categoryOptions[id - 1].enabled = true;
         }
         this.updateEnabledCategories();
 
         // date
-        const d = new Date(this.eventData.date);
-        const ds = `${d.getUTCFullYear()}-${d
-          .getUTCMonth()
-          .toString()
-          .padStart(2, "0")}-${d.getUTCDate().toString().padStart(2, "0")}`;
-        const ts = `${d
-          .getUTCHours()
-          .toString()
-          .padStart(2, "0")}:${d.getUTCMinutes().toString().padStart(2, "0")}`;
-        this.date = ds;
-        this.time = ts;
+        // const ms = Date.parse(this.eventData.date);
+        // console.log(this.date, this.time)
+
+        const simple = getInputFormatString(this.eventData.date);
+        this.date = simple.date;
+        this.time = simple.time;
+
         this.updateDate();
       });
     },
@@ -190,6 +186,7 @@ export default {
         };
       }
       this.categoryOptions = cs;
+      return 0;
     },
     convertTypes() {
       const form = Object.assign({}, this.form);
@@ -212,8 +209,6 @@ export default {
       // Date
       if (form.date == null || form.date == "") {
         this.errorMessages.push("A full date and time is required");
-      } else if (this.getDateTimeObject() < new Date()) {
-        this.errorMessages.push("Date and time must be in future");
       }
 
       // Capacity
@@ -238,28 +233,8 @@ export default {
 
       return this.errorMessages.length == 0;
     },
-    getDateTimeObject() {
-      const parts = this.date.split("-");
-      const d = new Date();
-      d.setDate(parseInt(parts[2]));
-      d.setMonth(parseInt(parts[1]));
-      d.setFullYear(parts[0]);
-      const timeParts = this.time.split(":");
-      d.setHours(parseInt(timeParts[0]));
-      d.setMinutes(parseInt(timeParts[1]));
-      console.log(d);
-      return d;
-
-    },
     updateDate() {
-      try {
-        const isoDate = this.getDateTimeObject().toISOString();
-        this.form.date = isoDate
-          .substring(0, isoDate.length - 1)
-          .replace("T", " ");
-      } catch {
-        // pass
-      }
+      this.form.date = `${this.date} ${this.time}:00.000`;
     },
     updateEnabledCategories() {
       this.form.categoryIds = this.getEnabledCategories();
