@@ -6,13 +6,13 @@ const userStore = {
     user: null,
 
     save() {
-        localStorage.setItem("auth", this.authToken);
-        localStorage.setItem("user", JSON.stringify(this.user));
+        sessionStorage.setItem("auth", this.authToken);
+        sessionStorage.setItem("user", JSON.stringify(this.user));
     },
 
     load() {
-        this.authToken = localStorage.getItem("auth");
-        this.user = JSON.parse(localStorage.getItem("user"));
+        this.authToken = sessionStorage.getItem("auth");
+        this.user = JSON.parse(sessionStorage.getItem("user"));
     },
 
     isLoggedIn() {
@@ -30,6 +30,10 @@ const userStore = {
         this.user = null;
         this.save()
     },
+
+    isLoggedInAs(id) {
+        return this.user.id == id;
+    },
 }
 
 const store = reactive({
@@ -39,6 +43,10 @@ const store = reactive({
 
     isLoggedIn() {
         return this.userStore.isLoggedIn();
+    },
+
+    loggedInAs(id) {
+        return this.userStore.isLoggedInAs(id);
     },
 
     async getCategories() {
