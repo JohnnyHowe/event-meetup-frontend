@@ -19,8 +19,8 @@
   </PageContent>
 </template>
 <script>
-import PageContent from "@/components/PageContent.vue";
-import FormInputBar from "@/components/FormInputBar.vue";
+import PageContent from "@/components/other/PageContent.vue";
+import FormInputBar from "@/components/other/FormInputBar.vue";
 import api from "@/api";
 export default {
   components: {

@@ -93,9 +93,9 @@
   </PageContent>
 </template>
 <script>
-import PageContent from "@/components/PageContent.vue";
-import EventsPage_EventCard from "@/components/EventsPage_EventCard.vue";
-import UserCard from "@/components/UserCard.vue";
+import PageContent from "@/components/other/PageContent.vue";
+import EventsPage_EventCard from "@/components/events/EventsPage_EventCard.vue";
+import UserCard from "@/components/user/UserCard.vue";
 import router from "@/routes";
 import api from "@/api";
 import store from "@/store";

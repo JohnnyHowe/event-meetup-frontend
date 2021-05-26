@@ -1,11 +1,12 @@
 import { createWebHashHistory, createRouter } from 'vue-router'
 
-import EventsPage from "@/components/EventsPage.vue";
-import EventPage from "@/components/EventPage.vue";
-import RegisterPage from "@/components/RegisterPage.vue";
-import LoginPage from "@/components/LoginPage.vue";
-import CreateEvent from "@/components/CreateEvent.vue";
-import ModifyEvent from "@/components/ModifyEvent.vue";
+import EventsPage from "@/components/events/EventsPage.vue";
+import EventPage from "@/components/events/EventPage.vue";
+import CreateEvent from "@/components/events/CreateEvent.vue";
+import ModifyEvent from "@/components/events/ModifyEvent.vue";
+
+import RegisterPage from "@/components/user/RegisterPage.vue";
+import LoginPage from "@/components/user/LoginPage.vue";
 
 import store from "@/store";
 

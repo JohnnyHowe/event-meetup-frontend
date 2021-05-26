@@ -1,5 +1,5 @@
 <template>
-  <PageContent title="Modify Event" type="form-wide">
+  <PageContent title="Create Event" type="form-wide">
     <p v-for="msg in errorMessages" v-bind:key="msg" id="errorMessage">
       {{ msg }}
     </p>
@@ -46,9 +46,7 @@
       title="Requires Attendance Control"
       type="checkbox"
     />
-    <FormInputBar v-model="newImage" title="New Image" type="checkbox" />
     <FormInputBar
-      v-if="newImage"
       v-on:change="fileChange"
       title="Image*"
       type="file"
@@ -80,24 +78,20 @@
   </PageContent>
 </template>
 <script>
-import PageContent from "@/components/PageContent.vue";
-import FormInputBar from "@/components/FormInputBar.vue";
+import PageContent from "@/components/other/PageContent.vue";
+import FormInputBar from "@/components/other/FormInputBar.vue";
 import api from "@/api";
 import store from "@/store";
-import router from "@/routes";
-import { getInputFormatString, getDateObject } from "@/utils/date";
 export default {
   components: {
     PageContent,
     FormInputBar,
   },
   mounted: function () {
-    this.loadIniialData();
+    this.loadCategories();
   },
   data: function () {
     return {
-      newImage: false,
-      id: null,
       image: null,
       categoryOptions: [],
       errorMessages: [],
@@ -124,56 +118,15 @@ export default {
       if (this.errorChecking(form)) {
         this.errorMessages = [];
         api.events
-          .put(this.id, form)
+          .add(form)
           .then((res) => {
-            if (this.newImage) {
-              this.trySendImage(res.data.eventId);
-            }
+            this.trySendImage(res.data.eventId);
             this.$router.push("/events");
           })
           .catch((e) => {
             this.errorMessages = [e.response.statusText];
           });
       }
-    },
-    async loadIniialData() {
-      this.id = this.$route.params.id;
-      api.events.getOne(this.id).then(async (res) => {
-        this.eventData = res.data;
-        // Are we definitely the organizer?
-        if (!store.loggedInAs(this.eventData.organizerId)) {
-          router.push("/events");
-        }
-
-        this.form.title = this.eventData.title;
-        this.form.description = this.eventData.description;
-        this.form.hasMaxCapacity = this.eventData.hasMaxCapacity == 1;
-        this.form.isOnline = this.eventData.isOnline == 1;
-        this.form.venue = this.eventData.venue;
-        this.form.url = this.eventData.url;
-        this.form.fee = this.eventData.fee;
-        this.form.requiresAttendanceControl =
-          this.eventData.requiresAttendanceControl == 1;
-        this.capacity = this.eventData.capacity;
-
-        // categories
-        await this.loadCategories();
-        for (let id of this.eventData.categories) {
-          this.categoryOptions[id - 1].enabled = true;
-        }
-        this.updateEnabledCategories();
-
-        // Are we allowed here?
-        if (getDateObject(this.eventData.date) < new Date()) {
-          router.push(`/events/${this.id}`)
-        }
-
-        const simple = getInputFormatString(this.eventData.date);
-        this.date = simple.date;
-        this.time = simple.time;
-
-        this.updateDate();
-      });
     },
     async loadCategories() {
       let data = await store.getCategories();
@@ -187,7 +140,6 @@ export default {
         };
       }
       this.categoryOptions = cs;
-      return 0;
     },
     convertTypes() {
       const form = Object.assign({}, this.form);
@@ -235,6 +187,9 @@ export default {
       // fee
       if (parseFloat(form.fee) < 0)
         this.errorMessages.push("Fee cannot be negative");
+
+      // Image
+      if (this.image == null) this.errorMessages.push("Image required");
 
       return this.errorMessages.length == 0;
     },

@@ -34,7 +34,7 @@
   </CardButton>
 </template>
 <script>
-import CardButton from "@/components/CardButton.vue";
+import CardButton from "@/components/other/CardButton.vue";
 import api from "@/api";
 import router from "@/routes";
 import store from "@/store";

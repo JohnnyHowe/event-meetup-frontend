@@ -75,9 +75,9 @@
   </PageContent>
 </template>
 <script>
-import EventsPage_Event from "@/components/EventsPage_EventCard.vue";
-import PageContent from "@/components/PageContent.vue";
-import Pagination from "@/components/Pagination.vue";
+import EventsPage_Event from "@/components/events/EventsPage_EventCard.vue";
+import PageContent from "@/components/other/PageContent.vue";
+import Pagination from "@/components/other/Pagination.vue";
 import store from "@/store";
 import api from "@/api";
 export default {
