@@ -39,6 +39,12 @@ import api from "@/api";
 import router from "@/routes";
 import store from "@/store";
 import { getPretty } from "@/utils/date";
+/**
+ * Show the event info in a card
+ * 
+ * Takes eventData prop
+ *  - is the full detailed event data object passed from backend
+ */
 export default {
   components: {
     CardButton,
