@@ -7,7 +7,7 @@
     <FormInputBar
       v-model="date"
       v-on:change="updateDate"
-      title="Date (UTC)*"
+      title="Date (NZ time)*"
       type="date"
     />
     <FormInputBar
@@ -71,17 +71,6 @@
             />
           </div>
         </div>
-
-        <!-- <tr v-for="option in categoryOptions" v-bind:key="option.name">
-          <input
-            v-model="option.enabled"
-            v-on:change="updateEnabledCategories"
-            type="checkbox"
-          />
-          {{
-            option.name
-          }}
-        </tr> -->
       </td>
     </table>
 
@@ -173,8 +162,6 @@ export default {
       // Date
       if (form.date == null || form.date == "") {
         this.errorMessages.push("A full date and time is required");
-      } else if (this.getDateTimeObject() < new Date()) {
-        this.errorMessages.push("Date and time must be in future");
       }
 
       // Capacity
@@ -198,28 +185,12 @@ export default {
         this.errorMessages.push("Fee cannot be negative");
 
       // Image
-      if (this.image == null)
-        this.errorMessages.push("Image required")
+      if (this.image == null) this.errorMessages.push("Image required");
 
       return this.errorMessages.length == 0;
     },
-    getDateTimeObject() {
-      const parts = this.date.split("-");
-      const d = new Date(+parts[0], parts[1] - 1, +parts[2], 12);
-      const timeParts = this.time.split(":");
-      d.setHours(timeParts[0]);
-      d.setMinutes(timeParts[1]);
-      return d;
-    },
     updateDate() {
-      try {
-        const isoDate = this.getDateTimeObject().toISOString();
-        this.form.date = isoDate
-          .substring(0, isoDate.length - 1)
-          .replace("T", " ");
-      } catch {
-        // pass
-      }
+      this.form.date = `${this.date} ${this.time}:00.000`;
     },
     updateEnabledCategories() {
       this.form.categoryIds = this.getEnabledCategories();

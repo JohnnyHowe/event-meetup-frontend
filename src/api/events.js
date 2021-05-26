@@ -20,4 +20,8 @@ async function add(form) {
     return makeRequest(axios.post, "events", {}, form)
 }
 
-export default { images, attendees, get, categories, add, getOne };
+async function put(id, form) {
+    return makeRequest(axios.patch, `events/${id}`, {}, form)
+}
+
+export default { images, attendees, get, put, categories, add, getOne };

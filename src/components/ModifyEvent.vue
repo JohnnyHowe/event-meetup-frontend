@@ -7,7 +7,7 @@
     <FormInputBar
       v-model="date"
       v-on:change="updateDate"
-      title="Date (UTC)*"
+      title="Date (NZ time)*"
       type="date"
     />
     <FormInputBar
@@ -46,7 +46,9 @@
       title="Requires Attendance Control"
       type="checkbox"
     />
+    <FormInputBar v-model="newImage" title="New Image" type="checkbox" />
     <FormInputBar
+      v-if="newImage"
       v-on:change="fileChange"
       title="Image*"
       type="file"
@@ -74,7 +76,7 @@
       </td>
     </table>
 
-    <!-- <button v-on:click="onSubmit">Submit</button> -->
+    <button v-on:click="onSubmit">Submit</button>
   </PageContent>
 </template>
 <script>
@@ -82,6 +84,7 @@ import PageContent from "@/components/PageContent.vue";
 import FormInputBar from "@/components/FormInputBar.vue";
 import api from "@/api";
 import store from "@/store";
+import router from "@/routes";
 export default {
   components: {
     PageContent,
@@ -93,6 +96,7 @@ export default {
   },
   data: function () {
     return {
+      newImage: false,
       id: null,
       image: null,
       categoryOptions: [],
@@ -116,48 +120,63 @@ export default {
   },
   methods: {
     async onSubmit() {
-        console.log(this.date)
-        console.log(this.time)
-      // let form = this.convertTypes();
-      // if (this.errorChecking(form)) {
-      //   this.errorMessages = [];
-      //   api.events
-      //     .add(form)
-      //     .then((res) => {
-      //       this.trySendImage(res.data.eventId);
-      //       this.$router.push("/events");
-      //     })
-      //     .catch((e) => {
-      //       this.errorMessages = [e.response.statusText];
-      //     });
-      // }
+      let form = this.convertTypes();
+      if (this.errorChecking(form)) {
+        this.errorMessages = [];
+        api.events
+          .put(this.id, form)
+          .then((res) => {
+            if (this.newImage) {
+              this.trySendImage(res.data.eventId);
+            }
+            this.$router.push("/events");
+          })
+          .catch((e) => {
+            this.errorMessages = [e.response.statusText];
+          });
+      }
     },
     loadIniialData() {
       this.id = this.$route.params.id;
-      api.events.getOne(this.id).then((res)  => {
+      api.events.getOne(this.id).then((res) => {
         this.eventData = res.data;
-        
+
+        // Are we definitely the organizer?
+        if (!store.loggedInAs(this.eventData.organizerId)) {
+          router.push("/events");
+        }
+
         this.form.title = this.eventData.title;
         this.form.description = this.eventData.description;
-        this.form.hasMaxCapacity = this.eventData.hasMaxCapacity;
-        this.form.isOnline = this.eventData.isOnline;
+        this.form.hasMaxCapacity = this.eventData.hasMaxCapacity == 1;
+        this.form.isOnline = this.eventData.isOnline == 1;
         this.form.venue = this.eventData.venue;
         this.form.url = this.eventData.url;
         this.form.fee = this.eventData.fee;
-        this.form.requiresAttendanceControl = this.eventData.requiresAttendanceControl;
+        this.form.requiresAttendanceControl =
+          this.eventData.requiresAttendanceControl == 1;
+        this.capacity = this.eventData.capacity;
 
         // categories
         for (let id of this.eventData.categories) {
           this.categoryOptions[id - 1].enabled = true;
         }
+        this.updateEnabledCategories();
 
-      // date
+        // date
         const d = new Date(this.eventData.date);
-        const ds = `${d.getFullYear()}-${d.getMonth().toString().padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`
-        const ts = `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`
+        const ds = `${d.getUTCFullYear()}-${d
+          .getUTCMonth()
+          .toString()
+          .padStart(2, "0")}-${d.getUTCDate().toString().padStart(2, "0")}`;
+        const ts = `${d
+          .getUTCHours()
+          .toString()
+          .padStart(2, "0")}:${d.getUTCMinutes().toString().padStart(2, "0")}`;
         this.date = ds;
         this.time = ts;
-      })
+        this.updateDate();
+      });
     },
     async loadCategories() {
       let data = await store.getCategories();
@@ -217,19 +236,20 @@ export default {
       if (parseFloat(form.fee) < 0)
         this.errorMessages.push("Fee cannot be negative");
 
-      // Image
-      if (this.image == null)
-        this.errorMessages.push("Image required")
-
       return this.errorMessages.length == 0;
     },
     getDateTimeObject() {
       const parts = this.date.split("-");
-      const d = new Date(+parts[0], parts[1] - 1, +parts[2], 12);
+      const d = new Date();
+      d.setDate(parseInt(parts[2]));
+      d.setMonth(parseInt(parts[1]));
+      d.setFullYear(parts[0]);
       const timeParts = this.time.split(":");
-      d.setHours(timeParts[0]);
-      d.setMinutes(timeParts[1]);
+      d.setHours(parseInt(timeParts[0]));
+      d.setMinutes(parseInt(timeParts[1]));
+      console.log(d);
       return d;
+
     },
     updateDate() {
       try {
