@@ -85,7 +85,7 @@ import FormInputBar from "@/components/FormInputBar.vue";
 import api from "@/api";
 import store from "@/store";
 import router from "@/routes";
-import {getInputFormatString} from "@/utils/date";
+import { getInputFormatString, getDateObject } from "@/utils/date";
 export default {
   components: {
     PageContent,
@@ -163,9 +163,10 @@ export default {
         }
         this.updateEnabledCategories();
 
-        // date
-        // const ms = Date.parse(this.eventData.date);
-        // console.log(this.date, this.time)
+        // Are we allowed here?
+        if (getDateObject(this.eventData.date) < new Date()) {
+          router.push(`/events/${this.id}`)
+        }
 
         const simple = getInputFormatString(this.eventData.date);
         this.date = simple.date;
@@ -205,6 +206,10 @@ export default {
 
       // Title
       if (form.title == "") this.errorMessages.push("Title must exist");
+
+      // Desc
+      if (form.description == "")
+        this.errorMessages.push("Description must exist");
 
       // Date
       if (form.date == null || form.date == "") {

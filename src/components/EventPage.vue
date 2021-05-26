@@ -1,6 +1,10 @@
 <template>
   <PageContent v-bind:title="eventData.title">
-    <button v-on:click="editEvent" style="width: 100%" v-if="actingAsOrganizer">
+    <button
+      v-on:click="editEvent"
+      style="width: 100%"
+      v-if="actingAsOrganizer && !old"
+    >
       Edit Event
     </button>
     <img v-if="imgSrc != null" style="width: 100%" v-bind:src="imgSrc" />
@@ -95,7 +99,7 @@ import UserCard from "@/components/UserCard.vue";
 import router from "@/routes";
 import api from "@/api";
 import store from "@/store";
-import { getPretty } from "@/utils/date";
+import { getPretty, getDateObject } from "@/utils/date";
 export default {
   components: {
     PageContent,
@@ -104,6 +108,7 @@ export default {
   },
   data: function () {
     return {
+      isOld: true,
       imgSrc: null,
       showAttendees: true,
       showSimilar: true,
@@ -133,6 +138,10 @@ export default {
         lastName: this.eventData.organizerLastName,
         attendeeId: this.eventData.organizerId,
       };
+
+      if (getDateObject(this.eventData.date) < new Date()) {
+        this.old = true;
+      }
 
       this.setIsActingAsOrganizer();
       this.loadImage();

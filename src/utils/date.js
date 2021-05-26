@@ -25,7 +25,7 @@ function getSmallString(dateString) {
  * @returns {Object}
  */
 function getInputFormatString(dateString) {
-    const dateObj = new Date(dateString)
+    const dateObj = getDateObject(dateString);
     const date = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, "0")}-${dateObj.getDate().toString().padStart(2, "0")}`
     const time = `${dateObj.getHours().toString().padStart(2, "0")}:${dateObj.getMinutes().toString().padStart(2, "0")}`
     return { date, time };
@@ -39,9 +39,17 @@ function getInputFormatString(dateString) {
  * @returns {String} nice date string
  */
 function getPretty(dateString) {
-      const simple = getSmallString(dateString);
-      return `${simple.time} (24h) on the ${simple.date}`;
+    const simple = getSmallString(dateString);
+    return `${simple.time} (24h) on the ${simple.date}`;
+}
+
+/**
+ * Given an iso string, get the js date object
+ * @param {String} dateString 
+ */
+function getDateObject(dateString) {
+    return new Date(dateString);
 }
 
 
-export { getInputFormatString, getSmallString, getPretty }
+export { getInputFormatString, getSmallString, getPretty, getDateObject }

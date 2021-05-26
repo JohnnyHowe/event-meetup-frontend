@@ -159,6 +159,10 @@ export default {
       // Title
       if (form.title == "") this.errorMessages.push("Title must exist");
 
+      // Desc
+      if (form.description == "")
+        this.errorMessages.push("Description must exist");
+
       // Date
       if (form.date == null || form.date == "") {
         this.errorMessages.push("A full date and time is required");
