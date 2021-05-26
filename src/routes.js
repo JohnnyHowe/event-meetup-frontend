@@ -4,6 +4,7 @@ import EventsPage from "@/components/events/EventsPage.vue";
 import EventPage from "@/components/events/EventPage.vue";
 import CreateEvent from "@/components/events/CreateEvent.vue";
 import ModifyEvent from "@/components/events/ModifyEvent.vue";
+import UserEvents from "@/components/events/MyEvents.vue";
 
 import RegisterPage from "@/components/user/RegisterPage.vue";
 import LoginPage from "@/components/user/LoginPage.vue";
@@ -20,6 +21,7 @@ const router = createRouter({
         { path: "/login", component: LoginPage },
 
         { path: "/events", component: EventsPage },
+        { path: "/events/mine", component: UserEvents },
         { path: "/events/:id", component: EventPage },
         { path: "/events/add", component: CreateEvent, meta: {requiresAuth: true}},
         { path: "/events/:id/edit", component: ModifyEvent, meta: {requiresAuth: true}},
