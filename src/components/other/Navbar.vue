@@ -1,11 +1,7 @@
 <template>
   <div class="main">
-    <!-- <button v-on:click="goHome">Events</button> -->
     <table>
       <div v-if="isLoggedIn">
-        <!-- <td>
-          <b-icon-person-circle class="user-icon" variant="light" />
-        </td> -->
         <td class="user-name">{{ userFullName }}</td>
       </div>
       <td>
@@ -89,7 +85,7 @@ export default {
   padding-left: 20px;
   font-size: 20px;
   font-style: italic;
-  white-space: nowrap;
+  /* white-space: nowrap; */
 }
 .user-icon {
   font-size: 3em;

@@ -116,6 +116,9 @@ export default {
         api.users
           .patch(this.id, form)
           .then(() => {
+            store.userStore.user.firstName = form.firstName;
+            store.userStore.user.lastName = form.lastName;
+
             this.trySendImage()
               .then(() => {
                 router.push("/profile");

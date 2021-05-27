@@ -8,7 +8,7 @@
           v-model="filters.searchString"
           type="text"
           placeholder="Search..."
-          maxlength="127"
+          maxlength="63"
         />
       </td>
       <td>

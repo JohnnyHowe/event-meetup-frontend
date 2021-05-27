@@ -31,7 +31,7 @@
       >
         <input
           v-model="ivalue"
-          maxlength="127"
+          maxlength="63"
           class="input-box"
           v-bind:type="type"
         />
