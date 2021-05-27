@@ -76,7 +76,30 @@
       </td>
     </table>
 
-    <button v-on:click="onSubmit">Submit</button>
+    <br />
+    <button class="grow" v-on:click="onSubmit">Submit</button>
+    <br />
+    <br />
+    <br />
+    <div v-click-outside="hidePrompt">
+      <button
+        v-on:click="deletePrompt = deletePrompt = true"
+        class="grow"
+        v-bind:id="deleteId"
+      >
+        Delete
+      </button>
+      <br />
+      <br />
+      <button
+        v-if="deletePrompt"
+        v-on:click="deleteEvent"
+        class="grow"
+        id="delete-button"
+      >
+        Are you sure?
+      </button>
+    </div>
   </PageContent>
 </template>
 <script>
@@ -96,6 +119,7 @@ export default {
   },
   data: function () {
     return {
+      deletePrompt: false,
       newImage: false,
       id: null,
       image: null,
@@ -118,7 +142,20 @@ export default {
       },
     };
   },
+  computed: {
+    deleteId() {
+      return this.deletePrompt ? "delete-button-pressed" : "delete-button";
+    },
+  },
   methods: {
+    hidePrompt() {
+      this.deletePrompt = false;
+    },
+    deleteEvent() {
+      api.events.remove(this.id).then(() => {
+        this.$router.push("/events");
+      });
+    },
     async onSubmit() {
       let form = this.convertTypes();
       if (this.errorChecking(form)) {
@@ -165,7 +202,7 @@ export default {
 
         // Are we allowed here?
         if (getDateObject(this.eventData.date) < new Date()) {
-          router.push(`/events/${this.id}`)
+          router.push(`/events/${this.id}`);
         }
 
         const simple = getInputFormatString(this.eventData.date);
@@ -276,5 +313,12 @@ export default {
 .filter-options {
   white-space: nowrap;
   padding-left: 15px;
+}
+#delete-button {
+  color: black;
+  background-color: #f55;
+}
+#delete-button-pressed {
+  color: black;
 }
 </style>

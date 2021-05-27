@@ -24,4 +24,8 @@ async function put(id, form) {
     return makeRequest(axios.patch, `events/${id}`, {}, form)
 }
 
-export default { images, attendees, get, put, categories, add, getOne };
+async function remove(id) {
+    return makeRequest(axios.delete, `events/${id}`)
+}
+
+export default { images, attendees, get, put, categories, add, getOne, remove };

@@ -1,5 +1,6 @@
 
 import store from "@/store";
+import axios from "axios";
 const VERBOSE = false;
 
 /**
@@ -17,7 +18,11 @@ export async function makeRequest(method, endpoint, parameters, body, headers) {
         }
     }
     config.headers = Object.assign(config.headers, headers);
-    return method(url, body, config);
+    if ([axios.post, axios.put, axios.patch].includes(method)) {
+        return method(url, body, config);
+    } else {
+        return method(url, config);
+    }
 }
 
 export function getURL(endpoint, parameters) {
