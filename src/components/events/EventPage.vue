@@ -30,7 +30,7 @@
       </tr>
       <tr v-if="eventData.isOnline">
         <strong>URL: </strong>
-        <a v-bind:href="eventData.url">{{ eventData.url }}</a>
+        <a v-bind:href="'//' + eventData.url">{{ eventData.url }}</a>
       </tr>
       <tr v-else>
         <strong>Venue:</strong>
@@ -104,13 +104,23 @@
             v-bind:key="user.attendeeId"
             v-bind:userData="user"
           >
-              <button v-if="actingAsOrganizer" v-on:click="setStatus(user.attendeeId, 'accepted')">Accept</button>
-              <br />
-              <button v-if="actingAsOrganizer" v-on:click="setStatus(user.attendeeId, 'rejected')">Reject</button>
+            <button
+              v-if="actingAsOrganizer"
+              v-on:click="setStatus(user.attendeeId, 'accepted')"
+            >
+              Accept
+            </button>
+            <br />
+            <button
+              v-if="actingAsOrganizer"
+              v-on:click="setStatus(user.attendeeId, 'rejected')"
+            >
+              Reject
+            </button>
           </UserCard>
         </div>
       </tr>
-<tr v-if="rejected.length > 0">
+      <tr v-if="rejected.length > 0">
         <strong>Rejected (Oldest First):</strong>
         <button v-if="showRejected" v-on:click="showRejected = false">
           Hide
@@ -123,9 +133,19 @@
             v-bind:key="user.attendeeId"
             v-bind:userData="user"
           >
-              <button v-if="actingAsOrganizer" v-on:click="setStatus(user.attendeeId, 'accepted')">Accept</button>
-              <br />
-              <button v-if="actingAsOrganizer" v-on:click="setStatus(user.attendeeId, 'pending')">Pend</button>
+            <button
+              v-if="actingAsOrganizer"
+              v-on:click="setStatus(user.attendeeId, 'accepted')"
+            >
+              Accept
+            </button>
+            <br />
+            <button
+              v-if="actingAsOrganizer"
+              v-on:click="setStatus(user.attendeeId, 'pending')"
+            >
+              Pend
+            </button>
           </UserCard>
         </div>
       </tr>
@@ -326,7 +346,7 @@ export default {
               this.pending.push(a);
             } else if (a.status === "rejected") {
               this.rejected.push(a);
-            } 
+            }
           }
         }
       });
@@ -394,11 +414,14 @@ export default {
         });
     },
     setStatus(userId, accepted) {
-      api.events.attendees.update(this.eventId, userId, accepted? "accepted": "rejected").then(() => {
-        this.loadEventInfo();
-      }).catch((e) => {
-        this.attendanceError = e.response.statusText;
-      });
+      api.events.attendees
+        .update(this.eventId, userId, accepted ? "accepted" : "rejected")
+        .then(() => {
+          this.loadEventInfo();
+        })
+        .catch((e) => {
+          this.attendanceError = e.response.statusText;
+        });
     },
   },
   computed: {
