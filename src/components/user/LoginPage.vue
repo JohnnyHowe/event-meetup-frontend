@@ -22,6 +22,7 @@ export default {
     FormInputBar,
   },
   mounted: function () {
+    console.log(this.$route)
     if (store.isLoggedIn()) {
       console.log("Already logged in, re-routing to events");
       this.$router.push("events");
@@ -42,7 +43,12 @@ export default {
         .login(this.form)
         .then(() => {
           this.errorMessage = "";
-          this.$router.push("events");
+
+          if (this.$route.query.redirect) {
+            this.$router.push(this.$route.query.redirect);
+          } else {
+            this.$router.push("/events");
+          }
         })
         .catch((e) => {
           this.errorMessage = e.response.statusText;

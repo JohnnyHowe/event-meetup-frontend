@@ -5,8 +5,8 @@ async function get(eventId) {
     return makeRequest(axios.get, `events/${eventId}/attendees`);
 }
 
-// async function getOne(eventId, attendeeId) {
-//     return makeRequest(axios.get, `events/${eventId}/attendees/${attendeeId}`);
-// }
+async function add(id) {
+    return makeRequest(axios.post, `events/${id}/attendees`)
+}
 
-export default { get };
+export default { get, add };

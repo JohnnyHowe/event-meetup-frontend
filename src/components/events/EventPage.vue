@@ -45,9 +45,20 @@
         }}
       </tr>
       <tr>
+        <strong>Requires Attendance Control:</strong>
+        {{
+          eventData.requiresAttendanceControl == 1
+        }}
+      </tr>
+      <tr>
         <br />
         <br />
       </tr>
+      <div v-if="!actingAsOrganizer && !amAttending">
+        <button v-on:click="requestAttendance">Request Attendance</button>
+        <br />
+        <br />
+      </div>
       <tr v-if="organizer != null">
         <strong>Organizer:</strong>
         <UserCard v-bind:userData="organizer" />
@@ -55,6 +66,21 @@
       <tr>
         <br />
         <br />
+      </tr>
+      <tr v-if="pending.length > 0">
+        <strong>Pending:</strong>
+        <button v-if="showPending" v-on:click="showPending = false">
+          Hide
+        </button>
+        <button v-else v-on:click="showPending = true">Show</button>
+        <div v-if="showPending">
+          <UserCard
+            style="margin-bottom: 10px"
+            v-for="user in pending"
+            v-bind:key="user.attendeeId"
+            v-bind:userData="user"
+          />
+        </div>
       </tr>
       <tr v-if="attendees.length > 0">
         <strong>Attendees:</strong>
@@ -109,8 +135,10 @@ export default {
   data: function () {
     return {
       isOld: true,
+      amAttending: false,
       imgSrc: null,
       showAttendees: true,
+      showPending: true,
       showSimilar: true,
       eventId: this.$route.params.id,
       categoryString: null,
@@ -119,6 +147,7 @@ export default {
       attendeesString: null,
       eventData: {},
       attendees: [],
+      pending: [],
       organizer: null,
       similarEvents: [],
       actingAsOrganizer: false,
@@ -151,6 +180,18 @@ export default {
       this.loadAttendees();
       this.loadSimilarEvents();
     },
+    requestAttendance() {
+      if (!store.isLoggedIn()) {
+        router.push({
+          path: "/login",
+          query: { redirect: this.$route.fullPath },
+        });
+      } else {
+        api.events.attendees.add(this.eventId).then(() => {
+          this.loadEventInfo();
+        });
+      }
+    },
     editEvent() {
       router.push(`/events/${this.eventId}/edit`);
     },
@@ -171,7 +212,27 @@ export default {
     },
     loadAttendees() {
       api.events.attendees.get(this.eventId).then((e) => {
-        this.attendees = e.data;
+        this.attendees = [];
+        this.pending = [];
+        for (let a of e.data) {
+          if (a.attendeeId == store.userStore.user.id) {
+            this.amAttending = true;
+          }
+
+          if (a.status === "accepted") {
+            if (this.amAttending) {
+              this.attendees.unshift(a);
+            } else {
+              this.attendees.push(a);
+            }
+          } else if (a.status === "pending") {
+            if (this.amAttending) {
+              this.pending.unshift(a);
+            } else {
+              this.pending.push(a);
+            }
+          }
+        }
       });
     },
     async loadSimilarEvents() {
@@ -222,6 +283,9 @@ export default {
     },
     setIsActingAsOrganizer() {
       this.actingAsOrganizer = store.loggedInAs(this.organizer.attendeeId);
+    },
+    isLoggedIn() {
+      return store.isLoggedIn();
     },
   },
   computed: {

@@ -32,7 +32,10 @@ const userStore = {
     },
 
     isLoggedInAs(id) {
-        return this.user.id == id;
+        if (this.user != null) {
+            return this.user.id == id;
+        }
+        return false;
     },
 }
 

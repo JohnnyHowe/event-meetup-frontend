@@ -56,6 +56,7 @@ export default {
       userImg: null,
       organizerName: "",
       categoryString: "",
+      isLoggedInUser: false,
     };
   },
   mounted: function () {
