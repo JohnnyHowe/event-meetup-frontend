@@ -43,6 +43,6 @@ export default {
 </script>
 <style scoped>
 .user-image {
-    width: 50%;
+  height: 300px;
 }
 </style>
