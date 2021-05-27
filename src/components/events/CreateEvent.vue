@@ -117,6 +117,7 @@ export default {
       let form = this.convertTypes();
       if (this.errorChecking(form)) {
         this.errorMessages = [];
+      console.log(form)
         api.events
           .add(form)
           .then((res) => {
@@ -148,8 +149,6 @@ export default {
       }
       form.fee = parseFloat(form.fee);
       form.isOnline = form.isOnline === "true" || form.isOnline === true;
-      form.requiresAttendanceControl =
-        form.requiresAttendanceControl === "true";
       return form;
     },
     errorChecking(form) {
