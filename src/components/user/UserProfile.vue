@@ -1,5 +1,5 @@
 <template>
-  <PageContent title="Profile">
+  <div>
     <img v-if="imgSrc != null" class="user-image" v-bind:src="imgSrc" />
     <img class="user-image" v-else src="@/../public/default-user.jpg" />
     <p style="font-size: 20px">
@@ -8,16 +8,12 @@
     <p style="font-size: 20px">
       {{ userData.email }}
     </p>
-  </PageContent>
+  </div>
 </template>
 <script>
-import PageContent from "@/components/other/PageContent.vue";
 import api from "@/api";
 export default {
   props: ["id"],
-  components: {
-    PageContent,
-  },
   data() {
     return {
       userData: {},

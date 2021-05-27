@@ -9,6 +9,7 @@ import UserEvents from "@/components/events/MyEvents.vue";
 import RegisterPage from "@/components/user/RegisterPage.vue";
 import LoginPage from "@/components/user/LoginPage.vue";
 import UserProfile from "@/components/user/MyUserProfile.vue";
+import EditMyUserProfile from "@/components/user/EditMyProfile.vue";
 
 import store from "@/store";
 
@@ -21,6 +22,7 @@ const router = createRouter({
         { path: "/register", component: RegisterPage },
         { path: "/login", component: LoginPage },
         { path: "/profile", component: UserProfile, meta: { requiresAuth: true } },
+        { path: "/profile/edit", component: EditMyUserProfile, meta: { requiresAuth: true } },
 
         { path: "/events", component: EventsPage },
         { path: "/events/mine", component: UserEvents, meta: { requiresAuth: true } },

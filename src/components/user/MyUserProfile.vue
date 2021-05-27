@@ -1,12 +1,16 @@
 <template>
-  <UserProfile v-if="id!=null" v-bind:id="id" />
+  <PageContent title="Profile">
+    <UserProfile v-if="id != null" v-bind:id="id" />
+    <button v-on:click="gotoEditPage" style="width:100%">Edit</button>
+  </PageContent>
 </template>
 <script>
+import PageContent from "@/components/other/PageContent.vue";
 import UserProfile from "@/components/user/UserProfile.vue";
 import store from "@/store";
 import router from "@/routes";
 export default {
-  components: { UserProfile },
+  components: { UserProfile, PageContent },
   data() {
     return {
       id: null,
@@ -19,5 +23,10 @@ export default {
       router.push("/events");
     }
   },
+  methods: {
+    gotoEditPage() {
+      router.push("/profile/edit");
+    }
+  }
 };
 </script>
