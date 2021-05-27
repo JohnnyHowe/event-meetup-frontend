@@ -50,11 +50,11 @@
       v-on:change="fileChange"
       title="Image*"
       type="file"
-      accept=".png,.jpg,.jpeg,.giff"
+      accept=".png,.jpg,.jpeg,.gif"
     />
     <table class="grow">
       <td>
-        <p style="text-align: right; width: 150px">Categories:</p>
+        <p style="text-align: right; width: 150px">Categories*:</p>
       </td>
       <td style="padding-left: 4px; text-align: left">
         <div class="container">

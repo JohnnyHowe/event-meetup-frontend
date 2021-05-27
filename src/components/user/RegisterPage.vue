@@ -7,7 +7,7 @@
     <FormInputBar v-model="form.lastName" title="Last name" />
     <FormInputBar v-model="form.email" title="Email" />
     <FormInputBar v-model="form.password" title="Password" type="password" />
-    <FormInputBar v-on:change="fileChange" title="Image" type="file" accept=".png,.jpg,.jpeg,.giff" />
+    <FormInputBar v-on:change="fileChange" title="Image" type="file" accept=".png,.jpg,.jpeg,.gif" />
     <br />
     <br />
     <button v-on:click="onSubmit">Register</button>

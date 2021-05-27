@@ -43,7 +43,7 @@
       v-on:change="onFileChange"
       title="Image"
       type="file"
-      accept=".png,.jpg,.jpeg,.giff"
+      accept=".png,.jpg,.jpeg,.gif"
     />
     <br />
     <br />

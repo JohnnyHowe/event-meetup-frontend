@@ -52,7 +52,7 @@
       v-on:change="fileChange"
       title="Image*"
       type="file"
-      accept=".png,.jpg,.jpeg,.giff"
+      accept=".png,.jpg,.jpeg,.gif"
     />
     <table class="grow">
       <td>
