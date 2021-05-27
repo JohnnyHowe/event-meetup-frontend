@@ -13,4 +13,8 @@ async function remove(eventId) {
     return makeRequest(axios.delete, `events/${eventId}/attendees`)
 }
 
-export default { get, add, remove };
+async function update(eventId, userId, status) {
+    return makeRequest(axios.patch, `events/${eventId}/attendees/${userId}`, {}, {status});
+}
+
+export default { get, add, remove, update };

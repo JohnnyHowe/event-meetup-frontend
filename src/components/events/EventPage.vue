@@ -79,7 +79,12 @@
         <p class="error">{{ cancelAttendanceError }}</p>
         <UserCard v-bind:userData="me">
           <strong>Status: {{ me.status }}</strong>
-          <button v-if="me.status !== 'rejected' && !old" v-on:click="cancelAttendance">Cancel Attendance</button>
+          <button
+            v-if="me.status !== 'rejected' && !old"
+            v-on:click="cancelAttendance"
+          >
+            Cancel Attendance
+          </button>
         </UserCard>
       </tr>
       <tr>
@@ -87,7 +92,7 @@
         <br />
       </tr>
       <tr v-if="pending.length > 0">
-        <strong>Pending:</strong>
+        <strong>Pending (Oldest First):</strong>
         <button v-if="showPending" v-on:click="showPending = false">
           Hide
         </button>
@@ -98,7 +103,30 @@
             v-for="user in pending"
             v-bind:key="user.attendeeId"
             v-bind:userData="user"
-          />
+          >
+              <button v-if="actingAsOrganizer" v-on:click="setStatus(user.attendeeId, 'accepted')">Accept</button>
+              <br />
+              <button v-if="actingAsOrganizer" v-on:click="setStatus(user.attendeeId, 'rejected')">Reject</button>
+          </UserCard>
+        </div>
+      </tr>
+<tr v-if="rejected.length > 0">
+        <strong>Rejected (Oldest First):</strong>
+        <button v-if="showRejected" v-on:click="showRejected = false">
+          Hide
+        </button>
+        <button v-else v-on:click="showRejected = true">Show</button>
+        <div v-if="showRejected">
+          <UserCard
+            style="margin-bottom: 10px"
+            v-for="user in rejected"
+            v-bind:key="user.attendeeId"
+            v-bind:userData="user"
+          >
+              <button v-if="actingAsOrganizer" v-on:click="setStatus(user.attendeeId, 'accepted')">Accept</button>
+              <br />
+              <button v-if="actingAsOrganizer" v-on:click="setStatus(user.attendeeId, 'pending')">Pend</button>
+          </UserCard>
         </div>
       </tr>
       <tr v-if="attendees.length > 0">
@@ -161,6 +189,7 @@ export default {
       showAttendees: true,
       showPending: true,
       showSimilar: true,
+      showRejected: true,
       eventId: this.$route.params.id,
       categoryString: null,
       dateString: null,
@@ -169,6 +198,7 @@ export default {
       eventData: {},
       attendees: [],
       pending: [],
+      rejected: [],
       organizer: null,
       similarEvents: [],
       actingAsOrganizer: false,
@@ -189,6 +219,7 @@ export default {
       this.imgSrc = null;
       this.showAttendees = true;
       this.showPending = true;
+      this.showRejected = true;
       this.showSimilar = true;
       this.eventId = this.$route.params.id;
       this.categoryString = null;
@@ -198,6 +229,7 @@ export default {
       this.eventData = {};
       this.attendees = [];
       this.pending = [];
+      this.rejected = [];
       this.organizer = null;
       this.similarEvents = [];
       this.actingAsOrganizer = false;
@@ -276,6 +308,7 @@ export default {
       this.amAttending = false;
       this.attendees = [];
       this.pending = [];
+      this.rejected = [];
       api.events.attendees.get(this.eventId).then((e) => {
         for (let a of e.data) {
           if (store.isLoggedIn()) {
@@ -291,7 +324,9 @@ export default {
               this.attendees.push(a);
             } else if (a.status === "pending") {
               this.pending.push(a);
-            }
+            } else if (a.status === "rejected") {
+              this.rejected.push(a);
+            } 
           }
         }
       });
@@ -357,6 +392,13 @@ export default {
         .catch((e) => {
           this.cancelAttendanceError = e.response.statusText;
         });
+    },
+    setStatus(userId, accepted) {
+      api.events.attendees.update(this.eventId, userId, accepted? "accepted": "rejected").then(() => {
+        this.loadEventInfo();
+      }).catch((e) => {
+        this.attendanceError = e.response.statusText;
+      });
     },
   },
   computed: {

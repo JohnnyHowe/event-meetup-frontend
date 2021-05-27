@@ -21,7 +21,7 @@
         }}
       </tr>
     </td>
-    <td v-if="isLoggedInUser" VALIGN="TOP" class="you-text-cell">
+    <td VALIGN="TOP" class="you-text-cell">
       <slot/>
     </td>
   </table>
