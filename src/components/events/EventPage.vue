@@ -72,6 +72,12 @@
         <strong>Organizer:</strong>
         <UserCard v-bind:userData="organizer" />
       </tr>
+      <tr v-if="amAttending">
+        <br />
+        <br />
+        <strong>You (Status: {{me.status}})</strong>
+        <UserCard v-bind:userData="me" />
+      </tr>
       <tr>
         <br />
         <br />
@@ -146,6 +152,7 @@ export default {
       attendanceError: "",
       isOld: true,
       amAttending: false,
+      me: null,
       imgSrc: null,
       showAttendees: true,
       showPending: true,
@@ -243,19 +250,15 @@ export default {
           if (store.isLoggedIn()) {
             if (a.attendeeId == store.userStore.user.id) {
               this.amAttending = true;
+              this.me = a;
+              continue;
             }
           }
 
-          if (a.status === "accepted") {
-            if (this.amAttending) {
-              this.attendees.unshift(a);
-            } else {
+          if (!this.amAttending) {
+            if (a.status === "accepted") {
               this.attendees.push(a);
-            }
-          } else if (a.status === "pending") {
-            if (this.amAttending) {
-              this.pending.unshift(a);
-            } else {
+            } else if (a.status === "pending") {
               this.pending.push(a);
             }
           }
