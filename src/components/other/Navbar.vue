@@ -21,6 +21,11 @@
           My Events
         </div>
       </td>
+      <td>
+        <div class="page-links" v-if="isLoggedIn" v-on:click="gotoProfile">
+          Profile
+        </div>
+      </td>
 
       <td style="width: 100%"></td>
       <div v-show="isLoggedIn">
@@ -52,7 +57,10 @@ export default {
     },
     gotoMyEvents() {
       router.push({ path: "/events/mine" });
-    }
+    },
+    gotoProfile() {
+      router.push({ path: "/profile" });
+    },
   },
   computed: {
     isLoggedIn() {
