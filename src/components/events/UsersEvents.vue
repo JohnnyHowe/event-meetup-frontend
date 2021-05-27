@@ -1,11 +1,54 @@
 <template>
   <PageContent title="My Events">
-    <p class="section-header">I'm Organizing</p>
-    <div v-for="event in organizing" v-bind:key="event.eventId" class="event">
-      <EventsPage_Event v-bind:eventData="event" />
+    <!-- Organizing -->
+    <div class="section-header">
+      <button v-if="!hideOrg" v-on:click="hideOrg=true">Hide</button>
+      <button v-else v-on:click="hideOrg=false">Show</button>
+      I'm Organizing {{ organizing.length }} Events
+      <div v-show="!hideOrg">
+        <div
+          v-for="event in organizing"
+          v-bind:key="event.eventId"
+          class="event"
+        >
+          <EventsPage_Event v-bind:eventData="event" />
+        </div>
+      </div>
     </div>
-    <p class="section-header">I'm Attending (accepted)</p>
-    <p class="section-header">I Want to Attend (pending)</p>
+    <br/>
+    <br/>
+    <!-- Pending -->
+    <div class="section-header">
+      <button v-if="!hidePend" v-on:click="hidePend=true">Hide</button>
+      <button v-else v-on:click="hidePend=false">Show</button>
+      I Wish to Attend (Pending) {{ pending.length }} Events
+      <div v-show="!hidePend">
+        <div
+          v-for="event in pending"
+          v-bind:key="event.eventId"
+          class="event"
+        >
+          <EventsPage_Event v-bind:eventData="event" />
+        </div>
+      </div>
+    </div>
+    <br/>
+    <br/>
+    <!-- Attending -->
+    <div class="section-header">
+      <button v-if="!hideAtt" v-on:click="hideAtt=true">Hide</button>
+      <button v-else v-on:click="hideAtt=false">Show</button>
+      I'm Attending (Accepted) {{ attending.length }} Events
+      <div v-show="!hideAtt">
+        <div
+          v-for="event in attending"
+          v-bind:key="event.eventId"
+          class="event"
+        >
+          <EventsPage_Event v-bind:eventData="event" />
+        </div>
+      </div>
+    </div>
   </PageContent>
 </template>
 <script>
@@ -23,6 +66,9 @@ export default {
   props: ["userId"],
   data() {
     return {
+      hideOrg: false,
+      hidePend: false,
+      hideAtt: false,
       organizing: [],
       attending: [],
       pending: [],
@@ -48,14 +94,13 @@ export default {
               break;
             }
           }
-
           // Now add to appropriate list
           if (eventData.organizerId == this.userId) {
             this.organizing.push(eventData);
           } else if (status === "accepted") {
             this.attending.push(eventData);
           } else if (status === "pending") {
-            this.attending.push(eventData);
+            this.pending.push(eventData);
           }
         });
       }
@@ -66,5 +111,7 @@ export default {
 <style scoped>
 .section-header {
   text-align: left;
+  font-size: 18px;
+  margin-bottom: 0px;
 }
 </style>
