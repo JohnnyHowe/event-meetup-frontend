@@ -22,7 +22,7 @@
       </tr>
     </td>
     <td v-if="isLoggedInUser" VALIGN="TOP" class="you-text-cell">
-      <p>This is you!</p>
+      <slot/>
     </td>
   </table>
 </template>
@@ -68,7 +68,7 @@ export default {
   border-radius: 5px;
   padding: 5px;
   width: 100%;
-  background-color: #dfd;
+  background-color: #ffd;
 }
 .you-text-cell {
   width: 200px;

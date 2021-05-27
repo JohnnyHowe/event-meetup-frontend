@@ -75,8 +75,12 @@
       <tr v-if="amAttending">
         <br />
         <br />
-        <strong>You (Status: {{me.status}})</strong>
-        <UserCard v-bind:userData="me" />
+        <strong>You</strong>
+        <p class="error">{{ cancelAttendanceError }}</p>
+        <UserCard v-bind:userData="me">
+          <strong>Status: {{ me.status }}</strong>
+          <button v-if="me.status !== 'rejected' && !old" v-on:click="cancelAttendance">Cancel Attendance</button>
+        </UserCard>
       </tr>
       <tr>
         <br />
@@ -169,6 +173,7 @@ export default {
       similarEvents: [],
       actingAsOrganizer: false,
       eventFull: true,
+      cancelAttendanceError: "",
     };
   },
   mounted() {
@@ -176,7 +181,31 @@ export default {
     window.scrollTo(0, 0);
   },
   methods: {
+    setDefault() {
+      this.attendanceError = "";
+      this.isOld = true;
+      this.amAttending = false;
+      this.me = null;
+      this.imgSrc = null;
+      this.showAttendees = true;
+      this.showPending = true;
+      this.showSimilar = true;
+      this.eventId = this.$route.params.id;
+      this.categoryString = null;
+      this.dateString = null;
+      this.feeString = null;
+      this.attendeesString = null;
+      this.eventData = {};
+      this.attendees = [];
+      this.pending = [];
+      this.organizer = null;
+      this.similarEvents = [];
+      this.actingAsOrganizer = false;
+      this.eventFull = true;
+      this.cancelAttendanceError = "";
+    },
     async loadEventInfo() {
+      this.setDefault();
       let res = await api.events.getOne(this.eventId);
       this.eventData = res.data;
 
@@ -243,9 +272,11 @@ export default {
       }
     },
     loadAttendees() {
+      this.me = null;
+      this.amAttending = false;
+      this.attendees = [];
+      this.pending = [];
       api.events.attendees.get(this.eventId).then((e) => {
-        this.attendees = [];
-        this.pending = [];
         for (let a of e.data) {
           if (store.isLoggedIn()) {
             if (a.attendeeId == store.userStore.user.id) {
@@ -316,6 +347,16 @@ export default {
     },
     isLoggedIn() {
       return store.isLoggedIn();
+    },
+    cancelAttendance() {
+      api.events.attendees
+        .remove(this.eventId)
+        .then(() => {
+          this.loadEventInfo();
+        })
+        .catch((e) => {
+          this.cancelAttendanceError = e.response.statusText;
+        });
     },
   },
   computed: {
