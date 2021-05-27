@@ -13,7 +13,7 @@ async function get(id) {
  */
 async function put(id, image) {
     const img = await readImage(image)
-    makeRequest(axios.put, `users/${id}/image`, {}, img, {"Content-Type": image.type});
+    return makeRequest(axios.put, `users/${id}/image`, {}, img, {"Content-Type": image.type});
 }
 
 function getURL(id) {
@@ -31,5 +31,9 @@ async function getSafeURL(id) {
     return res;
 }
 
+async function remove(id) {
+    return makeRequest(axios.delete, `users/${id}/image`);
+}
 
-export default { get, put, getURL, getSafeURL }
+
+export default { get, put, getURL, getSafeURL, remove }

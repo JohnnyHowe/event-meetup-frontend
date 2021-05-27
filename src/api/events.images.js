@@ -1,9 +1,9 @@
 import axios from "axios";
-import { makeRequest, readImage } from "./helper.js";
+import { makeRequest, getResource, readImage } from "./helper.js";
 import { getURL as rawGetURL } from "./helper.js";
 
 async function get(id) {
-    return makeRequest(axios.get, `events/${id}/image`);
+    return getResource(axios.get, `events/${id}/image`);
 }
 
 /**
@@ -12,7 +12,7 @@ async function get(id) {
  */
 async function put(id, image) {
     const img = await readImage(image)
-    makeRequest(axios.put, `events/${id}/image`, {}, img, {"Content-Type": image.type});
+    return makeRequest(axios.put, `events/${id}/image`, {}, img, {"Content-Type": image.type});
 }
 
 function getURL(id) {

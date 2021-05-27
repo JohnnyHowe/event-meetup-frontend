@@ -1,22 +1,46 @@
 <template>
   <PageContent title="Edit Profile">
-
     <p>Any field left unedited will not update account</p>
-    <br/>
-    <FormInputBar title="First Name" v-model="editedData.firstName"/>
-    <FormInputBar title="Last Name" v-model="editedData.lastName"/>
-    <FormInputBar title="Email" v-model="editedData.email"/>
-    <br/>
-    <div v-if="editedData.newPassword" style="text-align:left; padding-left:160px">Confirm current password to change</div>
-    <FormInputBar title="New Password" v-model="editedData.newPassword" type="password"/>
-    <FormInputBar v-if="editedData.newPassword" title="Current Password" v-model="passwordInput" type="password"/>
-    <br/>
-    <FormInputBar v-on:change="fileChange" title="Image" type="file" accept=".png,.jpg,.jpeg,.giff" />
-    <br/>
-    <br/>
+    <br />
+    <p v-for="msg in errorMessages" v-bind:key="msg" id="errorMessage">
+      {{ msg }}
+    </p>
+    <FormInputBar title="First Name" v-model="editedData.firstName" />
+    <FormInputBar title="Last Name" v-model="editedData.lastName" />
+    <FormInputBar title="Email" v-model="editedData.email" />
+    <br />
+    <div
+      v-if="editedData.newPassword"
+      style="text-align: left; padding-left: 160px"
+    >
+      Confirm current password to change
+    </div>
+    <FormInputBar
+      title="New Password"
+      v-model="editedData.newPassword"
+      type="password"
+    />
+    <FormInputBar
+      v-if="editedData.newPassword"
+      title="Current Password"
+      v-model="passwordInput"
+      type="password"
+    />
+    <br />
+
+    <FormInputBar title="Remove Image" type="checkbox" v-model="deleteImage" />
+    <FormInputBar
+      v-if="!deleteImage"
+      v-on:change="onFileChange"
+      title="Image"
+      type="file"
+      accept=".png,.jpg,.jpeg,.giff"
+    />
+    <br />
+    <br />
     <button v-on:click="submit">Submit</button>
-    <br/>
-    <br/>
+    <br />
+    <br />
     <button v-on:click="resetForm">Reset Form</button>
   </PageContent>
 </template>
@@ -34,10 +58,13 @@ export default {
   components: { PageContent, FormInputBar },
   data() {
     return {
+      deleteImage: false,
+      errorMessages: [],
       passwordInput: "",
       userData: {},
       id: null,
       editedData: {},
+      image: null,
     };
   },
   mounted() {
@@ -67,13 +94,77 @@ export default {
       this.editedData.newPassword = "";
     },
     submit() {
-      console.log("submit", this.editedData)
-    }
+      this.errorChecking().then(() => {
+        let form = {
+          firstName: this.editedData.firstName,
+          lastName: this.editedData.lastName,
+          email: this.editedData.email,
+        };
+        if (this.editedData.newPassword) {
+          form.password = this.editedData.newPassword;
+          form.currentPassword = this.passwordInput;
+        }
+        api.users
+          .patch(this.id, form)
+          .then(() => {
+            this.trySendImage()
+              .then(() => {
+                router.push("/profile");
+              })
+              .catch((e) => {
+                this.errorMessages.push(e.response.statusText);
+              });
+          })
+          .catch((e) => {
+            this.errorMessages.push(e.response.statusText);
+          });
+      });
+    },
+    async errorChecking() {
+      this.errorMessages = [];
+      // fname
+      if (!this.editedData.firstName)
+        this.errorMessages.push("First name is required");
+      // lname
+      if (!this.editedData.lastName)
+        this.errorMessages.push("Last name is required");
+      // email
+      if (!/^[^\s@]+@[^\s@]+$/.test(this.editedData.email))
+        this.errorMessages.push("Email format invalid");
+      // password
+      if (this.editedData.newPassword.length != 0) {
+        if (this.editedData.newPassword.length < 8) {
+          this.errorMessages.push(
+            "New password must have at least 8 characters"
+          );
+        }
+        if (this.passwordInput.length == 0) {
+          this.errorMessages.push("Current password must be entered");
+        }
+      }
+      return this.errorMessages.length == 0;
+    },
+    async trySendImage() {
+      if (this.deleteImage) {
+        return api.users.images.remove(this.id);
+      } else if (this.image != null) {
+        return api.users.images.put(this.id, this.image);
+      }
+    },
+    onFileChange(e) {
+      this.image = e.target.files[0];
+    },
   },
 };
 </script>
 <style scoped>
 .user-image {
   height: 300px;
+}
+.grow {
+  width: 100%;
+}
+#errorMessage {
+  color: red;
 }
 </style>

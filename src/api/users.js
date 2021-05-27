@@ -27,7 +27,7 @@ async function register(form, loginWhenComplete = true) {
  * 
  * @param {{email: String, password: String}} form 
  */
-export async function login(form) {
+async function login(form) {
     const res = await makeRequest(axios.post, "users/login", {}, form);
     if (res.status == 200) {
         const userRes = await get(res.data.userId);
@@ -48,4 +48,8 @@ async function get(userId) {
     return makeRequest(axios.get, `users/${userId}`);
 }
 
-export default { images, register, login, get };
+async function patch(userId, body) {
+    return makeRequest(axios.patch, `users/${userId}`, {}, body);
+}
+
+export default { images, register, login, get, patch };
