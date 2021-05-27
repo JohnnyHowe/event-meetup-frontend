@@ -105,6 +105,7 @@
 <script>
 import PageContent from "@/components/other/PageContent.vue";
 import FormInputBar from "@/components/other/FormInputBar.vue";
+import {checkDate, checkTime } from "@/utils/errorChecking";
 import api from "@/api";
 import store from "@/store";
 import router from "@/routes";
@@ -249,9 +250,8 @@ export default {
         this.errorMessages.push("Description must exist");
 
       // Date
-      if (form.date == null || form.date == "") {
-        this.errorMessages.push("A full date and time is required");
-      }
+      this.errorMessages = this.errorMessages.concat(checkDate(this.date))
+      this.errorMessages = this.errorMessages.concat(checkTime(this.time))
 
       // Capacity
       if (this.hasMaxCapacity && !form.capacity)
