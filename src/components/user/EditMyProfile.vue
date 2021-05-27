@@ -1,7 +1,8 @@
 <template>
   <PageContent title="Edit Profile">
-    <p>Any field left unedited will not update account</p>
-    <br />
+    <div style="text-align: left; padding-left: 160px">
+    Leaving these fields unmodified will cause no update to the account
+    </div>
     <p v-for="msg in errorMessages" v-bind:key="msg" id="errorMessage">
       {{ msg }}
     </p>
@@ -9,6 +10,10 @@
     <FormInputBar title="Last Name" v-model="editedData.lastName" />
     <FormInputBar title="Email" v-model="editedData.email" />
     <br />
+    <br />
+    <div style="text-align: left; padding-left: 160px">
+    Leave new password blank to keep current
+    </div>
     <div
       v-if="editedData.newPassword"
       style="text-align: left; padding-left: 160px"
@@ -27,7 +32,11 @@
       type="password"
     />
     <br />
+    <br />
 
+    <div style="text-align: left; padding-left: 160px">
+      Choosing no image will keep current
+      </div>
     <FormInputBar title="Remove Image" type="checkbox" v-model="deleteImage" />
     <FormInputBar
       v-if="!deleteImage"
@@ -94,7 +103,7 @@ export default {
       this.editedData.newPassword = "";
     },
     submit() {
-      this.errorChecking().then(() => {
+      if (this.errorChecking()) {
         let form = {
           firstName: this.editedData.firstName,
           lastName: this.editedData.lastName,
@@ -118,9 +127,9 @@ export default {
           .catch((e) => {
             this.errorMessages.push(e.response.statusText);
           });
-      });
+      }
     },
-    async errorChecking() {
+    errorChecking() {
       this.errorMessages = [];
       // fname
       if (!this.editedData.firstName)
