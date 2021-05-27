@@ -16,8 +16,7 @@
           {{ getDateStr() }} <br />
           Organizer: {{ eventData.organizerFirstName }}
           {{ eventData.organizerLastName }}<br />
-          Attendees: {{ eventData.numAcceptedAttendees }} /
-          {{ eventData.capacity }}<br />
+          Attendees: {{ attendeeString }}<br/>
           Categories: {{ categoryString }}
         </td>
       </tr>
@@ -41,7 +40,7 @@ import store from "@/store";
 import { getPretty } from "@/utils/date";
 /**
  * Show the event info in a card
- * 
+ *
  * Takes eventData prop
  *  - is the full detailed event data object passed from backend
  */
@@ -96,6 +95,25 @@ export default {
       api.users.images.getSafeURL(this.eventData.organizerId).then((res) => {
         this.userImg = res;
       });
+    },
+  },
+  computed: {
+    attendeeString() {
+      if (this.eventData.capacity == null) {
+        if (this.eventData.attendeeCount != null) {
+          return this.eventData.attendeeCount;
+        } else {
+          return "0";
+        }
+      } else {
+        if (this.eventData.attendeeCount != null) {
+          return (
+            this.eventData.attendeeCount + " out of " + this.eventData.capacity
+          );
+        } else {
+          return "0 out of " + this.eventData.capacity;
+        }
+      }
     },
   },
 };

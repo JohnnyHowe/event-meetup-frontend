@@ -40,9 +40,11 @@ export default {
   },
   mounted() {
     this.loadImg();
-    if (store.userStore.user.id == this.userData.attendeeId) {
-      this.isLoggedInUser = true;
-      this.mainClass = "main-shaded";
+    if (store.isLoggedIn()) {
+      if (store.userStore.user.id == this.userData.attendeeId) {
+        this.isLoggedInUser = true;
+        this.mainClass = "main-shaded";
+      }
     }
   },
   methods: {

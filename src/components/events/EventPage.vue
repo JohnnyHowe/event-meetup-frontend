@@ -54,8 +54,17 @@
         <br />
         <br />
       </tr>
-      <div v-if="!actingAsOrganizer && !amAttending">
-        <button v-on:click="requestAttendance">Request Attendance</button>
+      <div v-if="!actingAsOrganizer && !amAttending && !eventFull & !old">
+        <p class="error">{{ attendanceError }}</p>
+        <button
+          v-if="eventData.requiresAttendanceControl"
+          v-on:click="requestAttendance"
+        >
+          Request Attendance
+        </button>
+        <button v-else v-on:click="requestAttendance">
+          Register Attendance
+        </button>
         <br />
         <br />
       </div>
@@ -134,6 +143,7 @@ export default {
   },
   data: function () {
     return {
+      attendanceError: "",
       isOld: true,
       amAttending: false,
       imgSrc: null,
@@ -151,6 +161,7 @@ export default {
       organizer: null,
       similarEvents: [],
       actingAsOrganizer: false,
+      eventFull: true,
     };
   },
   mounted() {
@@ -172,6 +183,14 @@ export default {
         this.old = true;
       }
 
+      // is full?
+      this.eventFull = false;
+      if (this.eventData.capacity) {
+        if (this.eventData.capacity == this.eventData.attendeeCount) {
+          this.eventFull = true;
+        }
+      }
+
       this.setIsActingAsOrganizer();
       this.loadImage();
       this.setDateString();
@@ -181,15 +200,21 @@ export default {
       this.loadSimilarEvents();
     },
     requestAttendance() {
+      this.attendanceError = "";
       if (!store.isLoggedIn()) {
         router.push({
           path: "/login",
           query: { redirect: this.$route.fullPath },
         });
       } else {
-        api.events.attendees.add(this.eventId).then(() => {
-          this.loadEventInfo();
-        });
+        api.events.attendees
+          .add(this.eventId)
+          .then(() => {
+            this.loadEventInfo();
+          })
+          .catch((e) => {
+            this.attendanceError = e.response.statusText;
+          });
       }
     },
     editEvent() {
@@ -215,8 +240,10 @@ export default {
         this.attendees = [];
         this.pending = [];
         for (let a of e.data) {
-          if (a.attendeeId == store.userStore.user.id) {
-            this.amAttending = true;
+          if (store.isLoggedIn()) {
+            if (a.attendeeId == store.userStore.user.id) {
+              this.amAttending = true;
+            }
           }
 
           if (a.status === "accepted") {
@@ -313,5 +340,10 @@ export default {
 .data-table {
   text-align: left;
   width: 100%;
+}
+.error {
+  color: red;
+  text-align: left;
+  margin-bottom: 0px;
 }
 </style>

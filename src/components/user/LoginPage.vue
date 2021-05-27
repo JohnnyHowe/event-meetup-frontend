@@ -22,7 +22,6 @@ export default {
     FormInputBar,
   },
   mounted: function () {
-    console.log(this.$route)
     if (store.isLoggedIn()) {
       console.log("Already logged in, re-routing to events");
       this.$router.push("events");
