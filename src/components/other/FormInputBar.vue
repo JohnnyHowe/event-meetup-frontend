@@ -3,7 +3,7 @@
     <tr>
       <td id="title">{{ title }}:</td>
       <td v-if="type === 'textarea'" class="input-cell">
-        <textarea v-model="ivalue" class="input-box" v-bind:type="type" />
+        <textarea v-model="ivalue" class="input-box" maxlength="511" v-bind:type="type" />
       </td>
       <td
         v-else-if="type === 'checkbox'"
@@ -22,6 +22,18 @@
           style="text-align: left"
           v-bind:type="type"
           v-bind:accept="accept"
+        />
+      </td>
+      <td
+        v-else-if="type === 'text'"
+        class="input-cell"
+        style="text-align: left"
+      >
+        <input
+          v-model="ivalue"
+          maxlength="127"
+          class="input-box"
+          v-bind:type="type"
         />
       </td>
       <td v-else class="input-cell">

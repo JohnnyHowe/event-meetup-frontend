@@ -118,7 +118,6 @@ export default {
       let form = this.convertTypes();
       if (this.errorChecking(form)) {
         this.errorMessages = [];
-      console.log(form)
         api.events
           .add(form)
           .then((res) => {

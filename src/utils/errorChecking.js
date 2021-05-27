@@ -7,7 +7,13 @@
 function checkDate(date) {
     let errors = [];
     if (date == null || date === "") {errors.push("Date must exist")}
-    if (date.split("-")[0].length != 4) {errors.push("Year must be 4 digits")}
+    let year = date.split("-")[0];
+    if (year.length != 4) {errors.push("Year must be 4 digits")}
+    if (year) {
+        if (parseInt(year) > 2500) {
+            errors.push("Date too far in future (past 2500)")
+        }
+    }
     return errors;
 }
 
