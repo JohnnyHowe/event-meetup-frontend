@@ -1,4 +1,3 @@
-
 import store from "@/store";
 import axios from "axios";
 const VERBOSE = false;
@@ -18,7 +17,7 @@ export async function makeRequest(method, endpoint, parameters, body, headers) {
         }
     }
     config.headers = Object.assign(config.headers, headers);
-    if ([axios.post, axios.put, axios.patch].includes(method)) {
+    if (method === axios.post || method === axios.put || method === axios.patch) {
         return method(url, body, config);
     } else {
         return method(url, config);

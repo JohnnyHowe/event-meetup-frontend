@@ -16,7 +16,7 @@ import images from "./users.images.js";
 async function register(form, loginWhenComplete = true) {
     const registerRes = await makeRequest(axios.post, `users/register`, {}, form);
     if (loginWhenComplete) {
-        login(form);
+        await login(form);
     }
     return registerRes;
 }

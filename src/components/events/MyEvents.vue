@@ -1,5 +1,5 @@
 <template>
-    <UserEvents v-bind:userId="userId"/> 
+  <UserEvents v-if="userId != null" v-bind:userId="userId" />
 </template>
 <script>
 /**
@@ -10,20 +10,20 @@ import UserEvents from "@/components/events/UsersEvents.vue";
 import store from "@/store";
 import router from "@/routes";
 export default {
-    components: {
-        UserEvents,
-    },
-    data() {
-        return {
-            userId: null,
-        }
-    },
-    mounted() {
-        if (store.isLoggedIn()) {
-            this.userId = store.userStore.user.id;
-        } else {
-            router.push("/events");
-        }
-    },
-}
+  components: {
+    UserEvents,
+  },
+  data() {
+    return {
+      userId: null,
+    };
+  },
+  mounted() {
+    if (store.isLoggedIn()) {
+      this.userId = store.userStore.user.id;
+    } else {
+      router.push("/events");
+    }
+  },
+};
 </script>
