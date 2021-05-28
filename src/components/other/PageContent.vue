@@ -38,21 +38,21 @@ export default {
 </script>
 <style scoped>
 #content-card-main {
-  width: 60%;
+  width: 80%;
   margin: auto;
   margin-top: 24px;
   padding: 10px;
   padding-bottom: 0px;
 }
 #content-card-form {
-  width: 30%;
+  width: 50%;
   margin: auto;
   margin-top: 24px;
   padding: 10px;
   padding-bottom: 0px;
 }
 #content-card-form-wide {
-  width: 45%;
+  width: 65%;
   margin: auto;
   margin-top: 24px;
   padding: 10px;

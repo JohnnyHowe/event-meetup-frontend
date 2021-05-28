@@ -84,18 +84,12 @@ export default {
     }
 
     this.loadUserData();
-    this.loadImage();
   },
   methods: {
     loadUserData() {
       api.users.get(this.id).then((res) => {
         this.userData = res.data;
         this.resetForm();
-      });
-    },
-    loadImage() {
-      api.users.images.getSafeURL(this.id).then((res) => {
-        this.imgSrc = res;
       });
     },
     resetForm() {
